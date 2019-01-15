@@ -19,7 +19,4 @@ TSplot <- function(ts_data = NULL){
   res <- ts_data %>%
     sits::sits_plot() %>%
     print()
-
-  #return nothing
-  #invisible()
 }

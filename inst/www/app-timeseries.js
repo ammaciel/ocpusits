@@ -237,7 +237,7 @@ $(document).ready(function () {
         x: {
           type: 'timeseries',
           tick: {
-            format: '%Y-%m-%d'
+            format: '%Y-%m' //'%Y-%m-%d'
           }
         }
       },

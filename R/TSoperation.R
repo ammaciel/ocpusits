@@ -37,7 +37,6 @@ TSoperation <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("M
                                    latitude = as.numeric(latitude),
                                    bands = c(bands), start_date = start_date, end_date = end_date)
     return(point.tb)
-    #return(jsonlite::toJSON(point.tb))
   }
 
   if(name_service == "SATVEG" & (coverage == "terra" | coverage == "aqua" | coverage == "comb")){
@@ -48,10 +47,7 @@ TSoperation <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("M
                                     latitude = as.numeric(latitude),
                                     prefilter = as.character(pre_filter))
     return(point.tb)
-    #return(jsonlite::toJSON(point.tb))
   }
-  #return nothing
-  #invisible()
 }
 
 # TSoperation(name_service = "WTSS-INPE", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
@@ -59,10 +55,10 @@ TSoperation <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("M
 # TSoperation(name_service = "SATVEG", coverage = "terra", longitude = -56.245043, latitude = -13.224772)
 
 # as in ocpu documentation
-# curl localhost:5656/ocpu/user/inpe/library/ocpuSITS/R/TSoperation/json -H "Content-Type: application/json" -d '{"name_service":"WTSS-INPE", "coverage":"MOD13Q1", "bands":"evi", "longitude":-56, "latitude":"-12", "start_date":"2001-01-01", "end_date":"2002-01-01"}'
+# curl localhost:5656/ocpu/user/inpe/library/ocpusits/R/TSoperation/json -H "Content-Type: application/json" -d '{"name_service":"WTSS-INPE", "coverage":"MOD13Q1", "bands":"evi", "longitude":-56, "latitude":"-12", "start_date":"2001-01-01", "end_date":"2002-01-01"}'
 
 # save file
-# curl -o file.json localhost:5656/ocpu/user/inpe/library/ocpuSITS/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -o file.json localhost:5656/ocpu/user/inpe/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 # only json
 # curl localhost:5656/ocpu/user/inpe/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
