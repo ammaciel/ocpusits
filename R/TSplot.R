@@ -20,3 +20,4 @@ TSplot <- function(ts_data = NULL){
     sits::sits_plot() %>%
     print()
 }
+

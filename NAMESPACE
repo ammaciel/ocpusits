@@ -2,6 +2,7 @@
 
 export(TSfilter)
 export(TSoperation)
+export(TSoperation_shp)
 export(TSplot)
 importFrom(magrittr,"%>%")
 importFrom(sits,sits_coverage)

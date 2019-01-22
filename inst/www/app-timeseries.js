@@ -84,7 +84,7 @@ $(document).ready(function () {
       document.getElementById('lat').value = lat1;
       console.log("Latitude: " + lat1 + ", Longitude: " + long1);
 
-      //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1 
+      //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
     }
 
     // pan region marker from input lat long
@@ -102,14 +102,14 @@ $(document).ready(function () {
         icon: markIcon
       }).addTo(map).bindPopup("Latitude: " + lat1 + ", Longitude: " + long1);//.openPopup;
     });
-    
+
     // mousemove text with coordinates
     var lat, lng, coords;
     map.addEventListener('mousemove', function (ev) {
       lat = ev.latlng.lat;
       lng = ev.latlng.lng;
-      coords = "Coordinates: " + lat + ", " + lng;
-    
+      coords = "Lng: " + lng + ", Lat" + lat;
+
       document.getElementById('coord').innerHTML = coords; //.value
       // console.log("Coordinates: " + lat + ', ' + lng);
       // alert(lat + ' - ' + lng);
@@ -117,15 +117,102 @@ $(document).ready(function () {
       return false; // To disable default popup.
     });
 
-  
-  //------------------
-  // OPENCPU with R
-  //------------------
+    // draw polygons in leaflet
+  var drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
 
- // global variable used to save the session object
-  var nrow = 0;
-  // var nextTab = 0;
-    
+  var polyLayers = [];
+
+  var polygon1 = L.polygon([
+    [51.509, -0.08],
+    [51.503, -0.06],
+    [51.51, -0.047]
+  ]);
+  polyLayers.push(polygon1)
+
+  var polygon2 = L.polygon([
+    [51.512642, -0.099993],
+    [51.520387, -0.087633],
+    [51.509116, -0.082483]
+  ]);
+  polyLayers.push(polygon2)
+
+  // Add the layers to the drawnItems feature group 
+  for (layer of polyLayers) {
+    drawnItems.addLayer(layer);
+  }
+
+
+  // Set the title to show on the polygon button
+  L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a simple polygon!';
+
+  var drawControl = new L.Control.Draw({
+    position: 'topright',
+    draw: {
+      polyline: {
+        metric: true
+      },
+      polygon: {
+        allowIntersection: false,
+        showArea: true,
+        drawError: {
+          color: '#b00b00',
+          timeout: 1000
+        },
+        shapeOptions: {
+          color: '#bada55'
+        }
+      },
+      circle: {
+        shapeOptions: {
+          color: '#662d91'
+        }
+      },
+      marker: false
+    },
+    edit: {
+      featureGroup: drawnItems,
+      remove: false
+    }
+  });
+  map.addControl(drawControl);
+
+  map.on('draw:created', function (e) {
+    var type = e.layerType,
+      layer = e.layer;
+
+    if (type === 'marker') {
+      layer.bindPopup('A popup!');
+    }
+
+    drawnItems.addLayer(layer);
+  });
+
+  map.on('draw:edited', function (e) {
+    var layers = e.layers;
+    var countOfEditedLayers = 0;
+    layers.eachLayer(function (layer) {
+      countOfEditedLayers++;
+    });
+    console.log("Edited " + countOfEditedLayers + " layers");
+  });
+
+
+
+  L.DomUtil.get('changeColor').onclick = function () {
+    drawControl.setDrawingOptions({ rectangle: { shapeOptions: { color: '#004a80' } } });
+  };
+
+
+
+//------------------
+// OPENCPU with R
+//------------------
+
+// global variable used to save the session object
+var nrow = 0;
+// var nextTab = 0;
+
   $("#services").change(function () {
     switch ($(this).val()) {
       case 'WTSS-INPE':
@@ -210,7 +297,7 @@ $(document).ready(function () {
 
   // plot map using D3.js C3
   function plotChart(mySeries) {
-    //Draw chart 
+    //Draw chart
     var nestedData = d3.nest().key(function (d) { return d.date; }).entries(mySeries);
     var bands = d3.set();
     var formattedData = nestedData.map(function (entry) {
@@ -253,7 +340,7 @@ $(document).ready(function () {
   }
 
   var mySession = null;
-  
+
    function timeSeriesRaw() {
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
@@ -270,7 +357,7 @@ $(document).ready(function () {
        alert('Enter with longitude and latitude!');
        $("#submitbutton").removeAttr("disabled");
      } else {
- 
+
     var req = ocpu.call("TSoperation", { // ocpu.rpc
       name_service: service_selected,
       coverage: coverage_selected,
@@ -282,14 +369,14 @@ $(document).ready(function () {
       pre_filter: pre_filter_selected
     }, function (session) {
         mySession = session;
-        
+
         session.getObject(function(data){
          // console.log('DATA: ', data);
           var myData = data[0].time_series;
           console.log('MyData: ', myData);
           var series = prepareData(myData);
           plotChart(series);
-          
+
           // add row in table only if success plot time series
           $(function () {
             nrow += 1;
@@ -310,7 +397,7 @@ $(document).ready(function () {
     });
     }
   }
-  
+
   function timeSeriesFilter() {
     var filter_selected = $("#filter option:selected").val();
     console.log('filter: ', filter_selected);
@@ -322,10 +409,10 @@ $(document).ready(function () {
     console.log('sg-order: ', sg_order_selected);
     var sg_scale_selected = $("#sg-scale").val();
     console.log('sg-scale: ', sg_scale_selected);
-    
+
     //disable the button to prevent multiple clicks
     $("#submitbuttonfilter").attr("disabled", "disabled");
-    
+
     var req = ocpu.call("TSfilter", { //rpc
       ts_data: mySession,
       type_filter: filter_selected,
@@ -340,12 +427,12 @@ $(document).ready(function () {
           //console.log('MyData filter: ', myData);
           var series = prepareData(myData);
           //console.log('series: ', series);
-  
+
           var str = JSON.stringify(series).replace(/.whit/g, "_whit"); //convert to JSON string
-          str = str.replace(/.sg/g, "_sg");  
+          str = str.replace(/.sg/g, "_sg");
           var series2 = JSON.parse(str);    //convert back to array
           console.log('series filter: ', series2);
-  
+
           plotChart(series2);
         });
     }).always(function () { //after request complete, re-enable the button
@@ -366,7 +453,7 @@ $(document).ready(function () {
       e.preventDefault();
       timeSeriesFilter();
   });
- 
+
   //------------------
   // TABLE add samples
   //------------------
