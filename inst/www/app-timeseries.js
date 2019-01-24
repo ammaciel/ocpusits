@@ -64,9 +64,6 @@ $(document).ready(function () {
     });
 
     //----- new marker according to click
-    // map.on('click', addMarker);
-    // map.on('click', zoomTo);
-
     function addMarker(e){
       //Clear existing marker,
       if (newMarker !== undefined) {
@@ -86,6 +83,8 @@ $(document).ready(function () {
       
       //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
     }
+    map.on('click', addMarker);
+    // map.on('click', zoomTo);
 
     //----- pan region marker from input lat long text
     $("button").click(function () {
@@ -167,18 +166,57 @@ $(document).ready(function () {
 
   var drawControlEditOnly = new L.Control.Draw({
     edit: {
-      featureGroup: drawnItems
+      featureGroup: drawnItems,
+      remove: true
     },
     draw: false
   });
 
-  // map.addControl(drawControlFull);
+  map.addControl(drawControlFull);
+
   //----- enable and disable marker or polygon draw tool
   map.on("draw:created", function (e) {
     var layer = e.layer;
     layer.addTo(drawnItems);
     drawControlFull.removeFrom(map);
     drawControlEditOnly.addTo(map)
+    
+    var type = e.layerType;
+    if (type === 'polygon' || type === 'rectangle') {
+      var area = L.GeometryUtil.geodesicArea(layer.getLatLngs()); // squareMeters by default
+      areaInHa = (area / 10000).toFixed(2)
+      console.log(areaInHa);
+
+      if (areaInHa >= 6000) {  
+        var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
+        //document.getElementById('message').innerHTML = message; //.value
+        alert(message);
+        drawnItems.clearLayers();
+        drawControlFull.addTo(map);
+        drawControlEditOnly.removeFrom(map)        
+      } // 6 ha
+    }
+    else if (type === 'circle' ) {
+      var area = 0;
+      var radius = e.layer.getRadius();
+      area = (Math.PI) * (radius * radius);
+      
+      areaInHa = (area / 10000).toFixed(2)
+      console.log(areaInHa);
+
+      if (areaInHa >= 6000) {
+        var message = "Area more than 6000 ha: " + areaInHa + " ha.";
+        //document.getElementById('message').innerHTML = message; //.value
+        alert(message);
+        drawnItems.clearLayers();
+        drawControlFull.addTo(map);
+        drawControlEditOnly.removeFrom(map)
+      } // 6 ha
+    } else {
+      var popupContent = areaInHa;
+      layer.addPopup(layer);
+    }
+
   });
 
   map.on("draw:deleted", function (e) {
@@ -191,38 +229,36 @@ $(document).ready(function () {
   });
 
   //---------
-  var mixButton = document.getElementById("mixButton");
+  // var mixButton = document.getElementById("mixButton");
 
-  mixButton.addEventListener("click", capturePoint);
-   
-  function enableAddMarker() {
-    map.on("click", addMarker)
-  }
+  // mixButton.addEventListener("click", capturePoint);
 
-  function disableAddMarker() {
-    map.off("click", addMarker)
-  }
- 
-  function drawShape() {
-    console.log("drawShape - ok");
-    mixButton.removeEventListener("click", drawShape);
-    mixButton.addEventListener("click", capturePoint);
-    mixButton.value = "Capture Point";
-    drawnItems.clearLayers();
-    drawControlFull.removeFrom(map);
-    drawControlEditOnly.removeFrom(map);
-    enableAddMarker();
-  }
+  // //map.on("click", addMarker)
+  
+  
+  // function drawShape() {
+  //   console.log("drawShape - ok");
+  //   mixButton.removeEventListener("click", drawShape);
+  //   mixButton.addEventListener("click", capturePoint);
+  //   mixButton.value = "Capture Point";
 
-  function capturePoint() {
-    console.log("capturePoint - ok");
-    mixButton.removeEventListener("click", capturePoint);
-    mixButton.addEventListener("click", drawShape);
-    mixButton.value = "Draw Shape";
-    mixButton.removeEventListener("click", addMarker);
-    map.addControl(drawControlFull);
-    disableAddMarker();
-  }
+  //   drawnItems.clearLayers();
+  //   drawControlFull.removeFrom(map);
+  //   drawControlEditOnly.removeFrom(map);
+    
+  // }
+
+  // function capturePoint() {
+  //   console.log("capturePoint - ok");
+  //   mixButton.removeEventListener("click", capturePoint);
+  //   mixButton.addEventListener("click", drawShape);
+  //   mixButton.value = "Draw Shape";
+
+  //   //mixButton.removeEventListener("click", addMarker);
+  //   map.addControl(drawControlFull);
+  //   map.off("click", addMarker)
+  
+  // }
 //---------
 
 
