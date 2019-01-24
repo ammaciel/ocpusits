@@ -201,9 +201,9 @@
             <button type="button" id="submitbutton"> Submit to server! </button>
             
 
-            <button id="changeColor">Rectangle -> Blue</button>
+            <!-- <button id="changeColor">Rectangle -> Blue</button> -->
 
-            
+
             <!-- space between elements-->
             <!-- <div style="width:100%; height:5%; background-color: none;"> </div>   -->
             
@@ -233,7 +233,13 @@
 
       <div class="col-sm-10">
       <!-- place holder for map -->
-      <div id="map"></div>
+      <div id="map-wrapper">
+        <div id="map"></div>
+        <div id="button-wrapper">
+          <input type="button" id="mixButton" value="Capture Point" />
+        </div>
+      </div>
+
       <div class='pointer'></div> <!-- for search -->
       <p id="coord" style="color:black;"> </p>
       <div id="title-chart" class="all-charts-title boxtitlepanel"> Time Series </div>

@@ -9,8 +9,8 @@ $(document).ready(function () {
     var long1 = -56.245043;
     var newMarker = {};
     var newSquare = {};
-
-    //  create map object, tell it to live in 'map' div and give initial latitude, longitude, zoom values
+    
+    //----- create map object, tell it to live in 'map' div and give initial latitude, longitude, zoom values
     var map = L.map('map', {
       fullscreenControl: true,
       cursor: false,
@@ -29,7 +29,7 @@ $(document).ready(function () {
     //L.esri.basemapLayer('Imagery').addTo(map);
     L.esri.basemapLayer('ImageryLabels').addTo(map);
 
-    // search data
+    //----- search data
     var searchControl = new L.esri.Controls.Geosearch().addTo(map);
 
     var results = new L.LayerGroup().addTo(map);
@@ -43,7 +43,7 @@ $(document).ready(function () {
 
     setTimeout(function () { $('.pointer').fadeOut('slow'); }, 3400);
 
-    // draw rectangle with pixel size
+    //----- draw rectangle with pixel size
     // var sideInMeters = 250;
     // //drawSquare(map, center, { color: 'blue', weight: 1 }, sideInMeters);
 
@@ -63,10 +63,9 @@ $(document).ready(function () {
       popupAnchor: [0, -50] // point from which the popup should open relative to the iconAnchor
     });
 
-    // new marker according to click
-    newMarkerGroup = new L.LayerGroup();
-    map.on('click', addMarker);
-    //map.on('click', zoomTo);
+    //----- new marker according to click
+    // map.on('click', addMarker);
+    // map.on('click', zoomTo);
 
     function addMarker(e){
       //Clear existing marker,
@@ -78,16 +77,17 @@ $(document).ready(function () {
       newMarker = L.marker([e.latlng.lat, e.latlng.lng], {
         icon: markIcon
       }).addTo(map).bindPopup("Latitude: " + e.latlng.lat + ", Longitude: " +  e.latlng.lng);//.openPopup;
+            
       lat1 = e.latlng.lat;
       long1 = e.latlng.lng;
       document.getElementById('long').value = long1;
       document.getElementById('lat').value = lat1;
       console.log("Latitude: " + lat1 + ", Longitude: " + long1);
-
+      
       //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
     }
 
-    // pan region marker from input lat long
+    //----- pan region marker from input lat long text
     $("button").click(function () {
       //Clear existing marker,
       if (newMarker !== undefined) {
@@ -99,7 +99,8 @@ $(document).ready(function () {
       map.panTo(new L.LatLng(lat1, long1));
       // Add marker to map at click location; add popup window
       newMarker = L.marker([lat1, long1], {
-        icon: markIcon
+        icon: markIcon,
+        draggable: true
       }).addTo(map).bindPopup("Latitude: " + lat1 + ", Longitude: " + long1);//.openPopup;
     });
 
@@ -117,42 +118,19 @@ $(document).ready(function () {
       return false; // To disable default popup.
     });
 
-    // draw polygons in leaflet
+  //----- draw polygons in leaflet
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
 
-  var polyLayers = [];
-
-  var polygon1 = L.polygon([
-    [51.509, -0.08],
-    [51.503, -0.06],
-    [51.51, -0.047]
-  ]);
-  polyLayers.push(polygon1)
-
-  var polygon2 = L.polygon([
-    [51.512642, -0.099993],
-    [51.520387, -0.087633],
-    [51.509116, -0.082483]
-  ]);
-  polyLayers.push(polygon2)
-
-  // Add the layers to the drawnItems feature group 
-  for (layer of polyLayers) {
-    drawnItems.addLayer(layer);
-  }
-
-
-  // Set the title to show on the polygon button
-  L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a simple polygon!';
-
-  var drawControl = new L.Control.Draw({
+  // draw control
+  var drawControlFull = new L.Control.Draw({
     position: 'topright',
     draw: {
-      polyline: {
-        metric: true
-      },
+      polyline: false, //{
+        //metric: true
+      //},
       polygon: {
+        metric: true,
         allowIntersection: false,
         showArea: true,
         drawError: {
@@ -163,45 +141,91 @@ $(document).ready(function () {
           color: '#bada55'
         }
       },
-      circle: {
+      rectangle: {
+        metric: true,
         shapeOptions: {
+          clickable: true
+        }
+      },
+      circle: {
+        metric: true,
+        shapeOptions: {
+          color: '#0000FF',
           color: '#662d91'
         }
       },
-      marker: false
+      marker: false,
+      // marker: { //true
+      //   icon: addMarker,
+      // }
     },
+    // edit: {
+    //   featureGroup: drawnItems,
+    //   remove: true
+    // }
+  });
+
+  var drawControlEditOnly = new L.Control.Draw({
     edit: {
-      featureGroup: drawnItems,
-      remove: false
-    }
-  });
-  map.addControl(drawControl);
-
-  map.on('draw:created', function (e) {
-    var type = e.layerType,
-      layer = e.layer;
-
-    if (type === 'marker') {
-      layer.bindPopup('A popup!');
-    }
-
-    drawnItems.addLayer(layer);
+      featureGroup: drawnItems
+    },
+    draw: false
   });
 
-  map.on('draw:edited', function (e) {
-    var layers = e.layers;
-    var countOfEditedLayers = 0;
-    layers.eachLayer(function (layer) {
-      countOfEditedLayers++;
-    });
-    console.log("Edited " + countOfEditedLayers + " layers");
+  // map.addControl(drawControlFull);
+  //----- enable and disable marker or polygon draw tool
+  map.on("draw:created", function (e) {
+    var layer = e.layer;
+    layer.addTo(drawnItems);
+    drawControlFull.removeFrom(map);
+    drawControlEditOnly.addTo(map)
   });
 
+  map.on("draw:deleted", function (e) {
+    check = Object.keys(drawnItems._layers).length;
+    console.log(check);
+    if (check === 0) {
+      drawControlEditOnly.removeFrom(map);
+      drawControlFull.addTo(map);
+    };
+  });
+
+  //---------
+  var mixButton = document.getElementById("mixButton");
+
+  mixButton.addEventListener("click", capturePoint);
+   
+  function enableAddMarker() {
+    map.on("click", addMarker)
+  }
+
+  function disableAddMarker() {
+    map.off("click", addMarker)
+  }
+ 
+  function drawShape() {
+    console.log("drawShape - ok");
+    mixButton.removeEventListener("click", drawShape);
+    mixButton.addEventListener("click", capturePoint);
+    mixButton.value = "Capture Point";
+    drawnItems.clearLayers();
+    drawControlFull.removeFrom(map);
+    drawControlEditOnly.removeFrom(map);
+    enableAddMarker();
+  }
+
+  function capturePoint() {
+    console.log("capturePoint - ok");
+    mixButton.removeEventListener("click", capturePoint);
+    mixButton.addEventListener("click", drawShape);
+    mixButton.value = "Draw Shape";
+    mixButton.removeEventListener("click", addMarker);
+    map.addControl(drawControlFull);
+    disableAddMarker();
+  }
+//---------
 
 
-  L.DomUtil.get('changeColor').onclick = function () {
-    drawControl.setDrawingOptions({ rectangle: { shapeOptions: { color: '#004a80' } } });
-  };
 
 
 
