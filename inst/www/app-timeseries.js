@@ -174,16 +174,20 @@ $(document).ready(function () {
 
   map.addControl(drawControlFull);
 
+  var shpfile = null;
+
   //----- enable and disable marker or polygon draw tool
   map.on("draw:created", function (e) {
-    var layer = e.layer;
-    layer.addTo(drawnItems);
+    layerShp = e.layer;
+    //console.log('shp1: ', layerShp);
+
+    layerShp.addTo(drawnItems);
     drawControlFull.removeFrom(map);
     drawControlEditOnly.addTo(map)
     
     var type = e.layerType;
     if (type === 'polygon' || type === 'rectangle') {
-      var area = L.GeometryUtil.geodesicArea(layer.getLatLngs()); // squareMeters by default
+      var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // squareMeters by default
       areaInHa = (area / 10000).toFixed(2)
       console.log(areaInHa);
 
@@ -194,6 +198,8 @@ $(document).ready(function () {
         drawnItems.clearLayers();
         drawControlFull.addTo(map);
         drawControlEditOnly.removeFrom(map)        
+        shpfile = new L.Shapefile(layerShp);
+        console.log('shp1: ', shpfile);
       } // 6 ha
     }
     else if (type === 'circle' ) {
@@ -214,7 +220,7 @@ $(document).ready(function () {
       } // 6 ha
     } else {
       var popupContent = areaInHa;
-      layer.addPopup(layer);
+      layerShp.addPopup(layerShp);
     }
 
   });
@@ -384,7 +390,7 @@ var nrow = 0;
         x: {
           type: 'timeseries',
           tick: {
-            format: '%Y-%m' //'%Y-%m-%d'
+            format: '%Y-%m-%d' //'%Y-%m-%d'
           }
         }
       },
@@ -502,10 +508,79 @@ var nrow = 0;
     });
   }
 
+function timeSeriesShp() {
+    var service_selected = $("#services option:selected").val();
+    console.log('service: ', service_selected);
+    var coverage_selected = $("#coverages option:selected").val();
+    console.log('coverage: ', coverage_selected);
+    var band_selected = $("#band").val();
+    console.log('bands: ', band_selected);
+     var pre_filter_selected = $("#pre_filter").val();
+     console.log('pre filter: ', pre_filter_selected);
+    //disable the button to prevent multiple clicks
+    $("#submitbutton").attr("disabled", "disabled");
+
+  if (typeof layerShp !== "object" && layerShp === null) {
+       alert('Enter with polygon!');
+       $("#submitbutton").removeAttr("disabled");
+    } else {
+
+    var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
+      name_service: service_selected,
+      coverage: coverage_selected,
+      //longitude: $("#long").val(),
+      //latitude: $("#lat").val(),
+      bands: band_selected,
+      start_date: $("#from").val(),
+      end_date: $("#to").val(),
+      pre_filter: pre_filter_selected,
+      shp_file: layerShp,
+    }, function (session) {
+        
+        console.log('shp2: ', layerShp);
+        
+      mySession = session;
+        console.log('session: ', session);
+        
+
+        session.getObject(function(data){
+         // console.log('DATA: ', data);
+          var myData = data[0].time_series;
+          console.log('MyData: ', myData);
+          var series = prepareData(myData);
+          plotChart(series);
+
+          // add row in table only if success plot time series
+          $(function () {
+            nrow += 1;
+            var start_date1 = $("#from").val();
+            var end_date1 = $("#to").val();
+            var newRow = document.getElementById('tableSample').insertRow();
+            var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
+            //value='Delete'
+            newRow.innerHTML = dataService;
+          });
+        });
+    }).always(function () { //after request complete, re-enable the button
+      $("#submitbutton").removeAttr("disabled");
+      $("#submitbuttonfilter").removeAttr("disabled");
+    }).fail(function () { //if R returns an error, alert the error message
+      alert("Failed to plot time series!\nDefine service, coverage and LatLong input!");
+      $("#submitbutton").removeAttr("disabled");
+    });
+    }
+  }
+
+
+
   //button handler
   $("#submitbutton").on("click", function (e) {
       e.preventDefault();
-      timeSeriesRaw();
+     // if (layerShp != null) {
+        timeSeriesShp();
+     // } else {
+      //  timeSeriesRaw();
+      //}     
   });
 
   //button handler

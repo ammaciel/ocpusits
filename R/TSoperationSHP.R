@@ -1,19 +1,17 @@
 #' @title TS Operation shapefile
-#' @name TSoperation_shp
-#' @aliases TSoperation_shp
+#' @name TSoperationSHP
+#' @aliases TSoperationSHP
 #' @author Adeline Maciel
 #'
 #' @description Acquire time series tibble from service
 #'
-#' @usage TSoperation_shp(name_service = c("WTSS-INPE", "SATVEG"),
-#' coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL,
-#' latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
+#' @usage TSoperationSHP(name_service = c("WTSS-INPE", "SATVEG"),
+#' coverage = c("MOD13Q1", "terra", "aqua", "comb"),
+#' bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
 #' start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL)
 #'
 #' @param name_service  information of service, like WTSS-INPE or SATVEG.
 #' @param coverage      name of coverage from service.
-#' @param longitude     longitude information.
-#' @param latitude      latitude information.
 #' @param bands         set of bands from coverage
 #' @param start_date    first date of interval
 #' @param end_date      last date of the interval
@@ -23,22 +21,23 @@
 #' @export
 #'
 #' @importFrom sits sits_coverage sits_get_data
+#' @importFrom raster shapefile
 #'
 
-TSoperation_shp <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL, latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
+TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
 
   # #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
+  shp_file <- raster::shapefile(shp_file)
 
-  TSoperation(name_service = name_service, coverage = coverage, longitude = longitude, latitude = latitude, bands = bands, start_date = start_date, end_date = end_date, pre_filter = pre_filter )
+  TSoperation(name_service = name_service, coverage = coverage, bands = bands, start_date = start_date, end_date = end_date, pre_filter = pre_filter )
 
   if(name_service == "WTSS-INPE" & coverage == "MOD13Q1"){
     coverage_wtss.tb <- sits::sits_coverage(service = name_service, name = coverage)
     # retrieve the time series associated with the point from the WTSS server
-    point.tb <- sits::sits_get_data(coverage = coverage_wtss.tb, longitude = as.numeric(longitude),
-                                    latitude = as.numeric(latitude),
-                                    bands = c(bands), start_date = start_date, end_date = end_date,
+    point.tb <- sits::sits_get_data(coverage = coverage_wtss.tb, bands = c(bands),
+                                    start_date = start_date, end_date = end_date,
                                     file = shp_file)
     return(point.tb)
   }
@@ -47,8 +46,6 @@ TSoperation_shp <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = 
     coverage_satveg.tb <- sits::sits_coverage(service = name_service, name = coverage)
     # retrieve the time series associated with the point from the WTSS server
     point.tb <- sits::sits_get_data(coverage = coverage_satveg.tb,
-                                    longitude = as.numeric(longitude),
-                                    latitude = as.numeric(latitude),
                                     prefilter = as.character(pre_filter),
                                     file = shp_file)
     return(point.tb)

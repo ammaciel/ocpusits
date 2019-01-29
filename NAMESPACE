@@ -2,9 +2,10 @@
 
 export(TSfilter)
 export(TSoperation)
-export(TSoperation_shp)
+export(TSoperationSHP)
 export(TSplot)
 importFrom(magrittr,"%>%")
+importFrom(raster,shapefile)
 importFrom(sits,sits_coverage)
 importFrom(sits,sits_get_data)
 importFrom(sits,sits_merge)
