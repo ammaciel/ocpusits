@@ -21,7 +21,7 @@
 #' @export
 #'
 #' @importFrom sits sits_coverage sits_get_data
-#' @importFrom raster shapefile
+#' @importFrom sf st_read
 #'
 
 TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
@@ -29,9 +29,7 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
   # #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
-  shp_file <- raster::shapefile(shp_file)
-
-  TSoperation(name_service = name_service, coverage = coverage, bands = bands, start_date = start_date, end_date = end_date, pre_filter = pre_filter )
+  shp_file <- shp_file # sf::st_read(rgdal::readOGR
 
   if(name_service == "WTSS-INPE" & coverage == "MOD13Q1"){
     coverage_wtss.tb <- sits::sits_coverage(service = name_service, name = coverage)
@@ -53,16 +51,40 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 }
 
 
+# # update.packages(ask = FALSE, checkBuilt = TRUE)
+# shp_file = system.file("extdata/shapefiles/santa_cruz_minas.shp",
+#                         package = "sits")
+#
+# ocpusits::TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1",
+#                 shp_file = shp_file)
+#
 # coverage_wtss <- sits::sits_coverage(service = "WTSS-INPE", name = "MOD13Q1")
 # shp_file <- system.file("extdata/shapefiles/santa_cruz_minas.shp", package = "sits")
 # munic.tb <- sits::sits_get_data(coverage = coverage_wtss, file = shp_file)
+# munic.tb
 #
 # sf_shape <- sf::read_sf(shp_file)
 # bbox <- sf::st_bbox(sf_shape)
 # longitudes_shp <- munic.tb$longitude
 #
-# all(unique(longitudes_shp) > bbox["xmin"])
-# all(unique(longitudes_shp) < bbox["xmax"])
-#
 # sits::sits_plot(munic.tb)
+
+# file_js = geojsonR::FROM_GeoJson(url_file_string = "/home/inpe/Downloads/data.geojson")
+# file_js
+# sp::plot(file_js)
+#
+# coverage_wtss <- sits::sits_coverage(service = "WTSS-INPE", name = "MOD13Q1")
+# shp_file <- system.file("extdata/shapefiles/santa_cruz_minas.shp", package = "sits")
+# munic.tb <- sits::sits_get_data(coverage = coverage_wtss, file = shp_file)
+# munic.tb
+#
+# shp <- sf::st_read(shp_file)
+# sp::plot(shp$geometry, lwd=0.1)
+#
+# sf::st_crs(shp)
+# crs <- sf::st_crs(shp)
+# crs$epsg == 4326
+
+
+
 

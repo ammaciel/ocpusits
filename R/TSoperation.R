@@ -50,9 +50,9 @@ TSoperation <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("M
   }
 }
 
-# TSoperation(name_service = "WTSS-INPE", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
+# ocpusits::TSoperation(name_service = "WTSS-INPE", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
 
-# TSoperation(name_service = "SATVEG", coverage = "terra", longitude = -56.245043, latitude = -13.224772)
+#ocpusits::TSoperation(name_service = "SATVEG", coverage = "terra", longitude = -56.245043, latitude = -13.224772)
 
 # as in ocpu documentation
 # curl localhost:5656/ocpu/user/inpe/library/ocpusits/R/TSoperation/json -H "Content-Type: application/json" -d '{"name_service":"WTSS-INPE", "coverage":"MOD13Q1", "bands":"evi", "longitude":-56, "latitude":"-12", "start_date":"2001-01-01", "end_date":"2002-01-01"}'

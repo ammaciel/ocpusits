@@ -178,8 +178,8 @@ $(document).ready(function () {
 
   //----- enable and disable marker or polygon draw tool
   map.on("draw:created", function (e) {
-    layerShp = e.layer;
-    //console.log('shp1: ', layerShp);
+    var layerShp = e.layer;
+    console.log('shp1: ', layerShp);
 
     layerShp.addTo(drawnItems);
     drawControlFull.removeFrom(map);
@@ -191,6 +191,9 @@ $(document).ready(function () {
       areaInHa = (area / 10000).toFixed(2)
       console.log(areaInHa);
 
+      shpfile = layerShp.toGeoJSON(layerShp);
+      console.log('shp2: ', shpfile);
+
       if (areaInHa >= 6000) {  
         var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
         //document.getElementById('message').innerHTML = message; //.value
@@ -198,8 +201,6 @@ $(document).ready(function () {
         drawnItems.clearLayers();
         drawControlFull.addTo(map);
         drawControlEditOnly.removeFrom(map)        
-        shpfile = new L.Shapefile(layerShp);
-        console.log('shp1: ', shpfile);
       } // 6 ha
     }
     else if (type === 'circle' ) {
@@ -508,6 +509,7 @@ var nrow = 0;
     });
   }
 
+
 function timeSeriesShp() {
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
@@ -520,11 +522,14 @@ function timeSeriesShp() {
     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
-  if (typeof layerShp !== "object" && layerShp === null) {
-       alert('Enter with polygon!');
+  if (typeof shpfile !== "object" && shpfile === null) {
+    //(typeof shpfile !== "object" && shpfile === null) {
+       alert('Enter with the polygon!');
        $("#submitbutton").removeAttr("disabled");
     } else {
 
+    console.log('shp3: ', shpfile);
+   
     var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
       name_service: service_selected,
       coverage: coverage_selected,
@@ -534,12 +539,13 @@ function timeSeriesShp() {
       start_date: $("#from").val(),
       end_date: $("#to").val(),
       pre_filter: pre_filter_selected,
-      shp_file: layerShp,
+      shp_file: shpfile,
+      
     }, function (session) {
         
-        console.log('shp2: ', layerShp);
+      
         
-      mySession = session;
+        mySession = session;
         console.log('session: ', session);
         
 
@@ -576,11 +582,8 @@ function timeSeriesShp() {
   //button handler
   $("#submitbutton").on("click", function (e) {
       e.preventDefault();
-     // if (layerShp != null) {
-        timeSeriesShp();
-     // } else {
-      //  timeSeriesRaw();
-      //}     
+      timeSeriesShp();
+      //timeSeriesRaw();     
   });
 
   //button handler
