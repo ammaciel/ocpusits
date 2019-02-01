@@ -146,13 +146,14 @@ $(document).ready(function () {
           clickable: true
         }
       },
-      circle: {
-        metric: true,
-        shapeOptions: {
-          color: '#0000FF',
-          color: '#662d91'
-        }
-      },
+      circle: false //{
+        // metric: true,
+        // shapeOptions: {
+        //   color: '#0000FF',
+        //   color: '#662d91'
+        // }
+      //}
+      ,
       marker: false,
       // marker: { //true
       //   icon: addMarker,
@@ -176,6 +177,45 @@ $(document).ready(function () {
 
   var shpfile = null;
 
+  // https://gist.github.com/vladimir-rybalko/4dfe03cbea888ed351658f225c9fd65c
+  function toWKT(layer) {
+    var lng, lat, coords = [];
+    if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+      var latlngs = layer.getLatLngs();
+      for (var i = 0; i < latlngs.length; i++) {
+        var latlngs1 = latlngs[i];
+        if (latlngs1.length) {
+          for (var j = 0; j < latlngs1.length; j++) {
+            coords.push(latlngs1[j].lng + " " + latlngs1[j].lat);
+            if (j === 0) {
+              lng = latlngs1[j].lng;
+              lat = latlngs1[j].lat;
+            }
+          }
+        }
+        else {
+          coords.push(latlngs[i].lng + " " + latlngs[i].lat);
+          if (i === 0) {
+            lng = latlngs[i].lng;
+            lat = latlngs[i].lat;
+          }
+        }
+      };
+      if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+        return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+      } else if (layer instanceof L.Polyline) {
+        return "LINESTRING(" + coords.join(",") + ")";
+      }
+    } else if (layer instanceof L.Marker) {
+      return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
+    }
+  };
+  map.on('draw:edited', function (e) {
+    e.layers.eachLayer(function (layer) {
+      console.log(toWKT(layer));
+    });
+  });
+
   //----- enable and disable marker or polygon draw tool
   map.on("draw:created", function (e) {
     var layerShp = e.layer;
@@ -191,8 +231,26 @@ $(document).ready(function () {
       areaInHa = (area / 10000).toFixed(2)
       console.log(areaInHa);
 
-      shpfile = layerShp.toGeoJSON(layerShp);
+      shpfile = toWKT(layerShp);
       console.log('shp2: ', shpfile);
+
+      var layerShp2 = layerShp.toGeoJSON();
+      
+      var turf = require('turf')
+      var buffered = turf.buffer(layerShp2.toGeoJSON(), 100, {units: 'meters'});
+      console.log(buffered);
+      var parcelbuf = L.geoJSON(buffered);
+      parcelbuf.addTo(map);
+
+
+      // var bbox = layerShp.getBounds();
+      // console.log('bbox: ', bbox);
+      // var cellSide = 231;
+      // var options = { units: 'meters' };
+
+      // var squareGrid = turf.squareGrid(bbox, cellSide, options);
+      // console.log('squareGrid: ', squareGrid);
+
 
       if (areaInHa >= 6000) {  
         var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
@@ -203,26 +261,26 @@ $(document).ready(function () {
         drawControlEditOnly.removeFrom(map)        
       } // 6 ha
     }
-    else if (type === 'circle' ) {
-      var area = 0;
-      var radius = e.layer.getRadius();
-      area = (Math.PI) * (radius * radius);
+    // else if (type === 'circle' ) {
+    //   var area = 0;
+    //   var radius = e.layer.getRadius();
+    //   area = (Math.PI) * (radius * radius);
       
-      areaInHa = (area / 10000).toFixed(2)
-      console.log(areaInHa);
+    //   areaInHa = (area / 10000).toFixed(2)
+    //   console.log(areaInHa);
 
-      if (areaInHa >= 6000) {
-        var message = "Area more than 6000 ha: " + areaInHa + " ha.";
-        //document.getElementById('message').innerHTML = message; //.value
-        alert(message);
-        drawnItems.clearLayers();
-        drawControlFull.addTo(map);
-        drawControlEditOnly.removeFrom(map)
-      } // 6 ha
-    } else {
-      var popupContent = areaInHa;
-      layerShp.addPopup(layerShp);
-    }
+    //   if (areaInHa >= 6000) {
+    //     var message = "Area more than 6000 ha: " + areaInHa + " ha.";
+    //     //document.getElementById('message').innerHTML = message; //.value
+    //     alert(message);
+    //     drawnItems.clearLayers();
+    //     drawControlFull.addTo(map);
+    //     drawControlEditOnly.removeFrom(map)
+    //   } // 6 ha
+    // } else {
+    //   var popupContent = areaInHa;
+    //   layerShp.addPopup(layerShp);
+    // }
 
   });
 
@@ -530,31 +588,28 @@ function timeSeriesShp() {
 
     console.log('shp3: ', shpfile);
    
-    var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
-      name_service: service_selected,
-      coverage: coverage_selected,
-      //longitude: $("#long").val(),
-      //latitude: $("#lat").val(),
-      bands: band_selected,
-      start_date: $("#from").val(),
-      end_date: $("#to").val(),
-      pre_filter: pre_filter_selected,
-      shp_file: shpfile,
-      
+    // var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
+    //   name_service: service_selected,
+    //   coverage: coverage_selected,
+    //   //longitude: $("#long").val(),
+    //   //latitude: $("#lat").val(),
+    //   bands: band_selected,
+    //   start_date: $("#from").val(),
+    //   end_date: $("#to").val(),
+    //   pre_filter: pre_filter_selected,
+    //   shp_file: shpfile,
+
+    var req = ocpu.call("TSplot", { // ocpu.rpc
+      ts_data: shpfile,
     }, function (session) {
-        
-      
         
         mySession = session;
         console.log('session: ', session);
         
-
-        session.getObject(function(data){
-         // console.log('DATA: ', data);
-          var myData = data[0].time_series;
-          console.log('MyData: ', myData);
-          var series = prepareData(myData);
-          plotChart(series);
+        var req1 = $("#plotdiv").rplot("TSplot", {
+          ts_data: shpfile,
+        }).always(function () { //after request complete, re-enable the button
+          $("#submitbutton").removeAttr("disabled");
 
           // add row in table only if success plot time series
           $(function () {

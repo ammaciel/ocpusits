@@ -12,12 +12,22 @@
 #' @export
 #'
 #' @importFrom sits sits_plot
+#' @importFrom sp plot
+#' @importFrom rgeos readWKT
 #'
 
+#TSplot <- function(ts_data = NULL){
 TSplot <- function(ts_data = NULL){
 
-  res <- ts_data %>%
-    sits::sits_plot() %>%
-    print()
+  # res <- ts_data %>%
+  #   sits::sits_plot() %>%
+  #   print()
+
+  wkt_file <- ts_data
+  crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+  sp::plot(rgeos::readWKT(text = wkt_file, p4s = crs))
+
+
 }
 

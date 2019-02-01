@@ -21,7 +21,6 @@
 #' @export
 #'
 #' @importFrom sits sits_coverage sits_get_data
-#' @importFrom sf st_read
 #'
 
 TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
@@ -29,7 +28,10 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
   # #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
-  shp_file <- shp_file # sf::st_read(rgdal::readOGR
+  #shp_file <- shp_file
+  wkt_file <- shp_file
+  crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  shp_file <- rgeos::readWKT(text = wkt_file, p4s = crs)
 
   if(name_service == "WTSS-INPE" & coverage == "MOD13Q1"){
     coverage_wtss.tb <- sits::sits_coverage(service = name_service, name = coverage)
@@ -68,15 +70,6 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 # longitudes_shp <- munic.tb$longitude
 #
 # sits::sits_plot(munic.tb)
-
-# file_js = geojsonR::FROM_GeoJson(url_file_string = "/home/inpe/Downloads/data.geojson")
-# file_js
-# sp::plot(file_js)
-#
-# coverage_wtss <- sits::sits_coverage(service = "WTSS-INPE", name = "MOD13Q1")
-# shp_file <- system.file("extdata/shapefiles/santa_cruz_minas.shp", package = "sits")
-# munic.tb <- sits::sits_get_data(coverage = coverage_wtss, file = shp_file)
-# munic.tb
 #
 # shp <- sf::st_read(shp_file)
 # sp::plot(shp$geometry, lwd=0.1)
@@ -85,6 +78,18 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 # crs <- sf::st_crs(shp)
 # crs$epsg == 4326
 
+# # https://askubuntu.com/questions/1010948/unable-to-install-geojson-package-for-r
+# file_js = geojsonio::geojson_read(x = "/home/inpe/Downloads/data.geojson", what = "sp")
+# file_js
+# sp::plot(file_js)
+
+# wkt_file <- "/home/inpe/Downloads/mt.wkt"
+#
+# wkt_file <- ("POLYGON((38.4 -125,40.9 -125,40.9 -121.8,38.4 -121.8,38.4 -125))")
+# # "POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))")
+# crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+#
+# sp::plot(rgeos::readWKT(text = wkt_file, p4s = crs))
 
 
 

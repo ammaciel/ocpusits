@@ -11,8 +11,9 @@ LazyData: true
 RoxygenNote: 6.1.1
 Imports:
         magrittr,
-        sf,
-        sits
+        rgeos,
+        sits,
+        sp
 Remotes:
       e-sensing/sits
 URL: https://github.com/ammaciel/ocpusits
