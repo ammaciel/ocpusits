@@ -175,8 +175,6 @@ $(document).ready(function () {
 
   map.addControl(drawControlFull);
 
-  var shpfile = null;
-
   // https://gist.github.com/vladimir-rybalko/4dfe03cbea888ed351658f225c9fd65c
   function toWKT(layer) {
     var lng, lat, coords = [];
@@ -216,15 +214,66 @@ $(document).ready(function () {
     });
   });
 
+  function PutBuffer(layer) {
+
+    var options = { units: 'meters' };
+
+    var buffered = turf.buffer(layer.toGeoJSON(), -250, options);
+    turfLayer.addData(buffered)
+    console.log('buffered: ', buffered); //JSON.stringify(buffered));
+
+
+    //var bbox = layer.getBounds();
+    var bbox = turf.bboxPolygon(turf.bbox(buffered));
+    console.log('bbox: ', bbox);
+
+    var bbox_array = bbox.geometry.coordinates[0];
+    console.log('bbox_array: ', JSON.stringify(bbox_array));
+    var array = [];
+    
+    array = bbox_array[0].concat(bbox_array[2]);
+    var cellSide = 232;
+    
+    console.log('ABAIXO: bbox_array: ', array);
+    var pointGrid = turf.pointGrid(array, cellSide, options);
+    //turfLayer.addData(squareGrid)
+    console.log('pointGrid: ', pointGrid);
+
+    console.log('ABAIXO: la la la: ');
+    var pointsWithin = turf.pointsWithinPolygon(pointGrid, buffered);
+    //turfLayer.addData(pointsWithin)
+    console.log('pointsWithin: ', pointsWithin);
+
+    var points = new L.Circle(pointsWithin, 232);
+    var square = L.rectangle(points.getBounds()).addTo(map);
+    console.log('ABAIXO2: bbox_array: ', square);
+
+  }
+
+  var turfLayer = L.geoJson(null, {
+    style: function (feature) {
+      var style = {
+        color: '#561196',
+        fillColor: 'yellow',
+        weight: 0.5
+      };
+      return style;
+    }
+  }).addTo(map);
+
+  var shpfile = null;
+
   //----- enable and disable marker or polygon draw tool
   map.on("draw:created", function (e) {
+   // drawnItems.clearLayers();
     var layerShp = e.layer;
     console.log('shp1: ', layerShp);
 
     layerShp.addTo(drawnItems);
     drawControlFull.removeFrom(map);
     drawControlEditOnly.addTo(map)
-    
+    PutBuffer(layerShp);
+      
     var type = e.layerType;
     if (type === 'polygon' || type === 'rectangle') {
       var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // squareMeters by default
@@ -233,23 +282,6 @@ $(document).ready(function () {
 
       shpfile = toWKT(layerShp);
       console.log('shp2: ', shpfile);
-
-      var layerShp2 = layerShp.toGeoJSON();
-      
-      var turf = require('turf')
-      var buffered = turf.buffer(layerShp2.toGeoJSON(), 100, {units: 'meters'});
-      console.log(buffered);
-      var parcelbuf = L.geoJSON(buffered);
-      parcelbuf.addTo(map);
-
-
-      // var bbox = layerShp.getBounds();
-      // console.log('bbox: ', bbox);
-      // var cellSide = 231;
-      // var options = { units: 'meters' };
-
-      // var squareGrid = turf.squareGrid(bbox, cellSide, options);
-      // console.log('squareGrid: ', squareGrid);
 
 
       if (areaInHa >= 6000) {  
