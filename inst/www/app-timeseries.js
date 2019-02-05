@@ -137,13 +137,16 @@ $(document).ready(function () {
           timeout: 1000
         },
         shapeOptions: {
-          color: '#bada55'
+          color: '#bada55',
+          fill: false,
         }
       },
       rectangle: {
         metric: true,
         shapeOptions: {
-          clickable: true
+          clickable: true,
+          color: '#bada55',
+          fill: false,
         }
       },
       circle: false //{
@@ -214,48 +217,63 @@ $(document).ready(function () {
     });
   });
 
-  function PutBuffer(layer) {
+  function getPointsPolygon(layer) {
 
     var options = { units: 'meters' };
 
-    var buffered = turf.buffer(layer.toGeoJSON(), -250, options);
-    turfLayer.addData(buffered)
-    console.log('buffered: ', buffered); //JSON.stringify(buffered));
+    var buffered = turf.buffer(layer.toGeoJSON(), -200, options);
+    //turfLayer.addData(buffered)
+    //console.log('buffered: ', buffered); //JSON.stringify(buffered));
 
-
-    //var bbox = layer.getBounds();
+    // create bounding box of buffer layer
     var bbox = turf.bboxPolygon(turf.bbox(buffered));
     console.log('bbox: ', bbox);
 
+    // pass to array type
     var bbox_array = bbox.geometry.coordinates[0];
     console.log('bbox_array: ', JSON.stringify(bbox_array));
     var array = [];
-    
     array = bbox_array[0].concat(bbox_array[2]);
+   
+    // set options to squareGrid turf.js
+    var options1 = {
+      units: 'meters',
+      mask: buffered, // use buffer as mask
+    };
     var cellSide = 232;
     
-    console.log('ABAIXO: bbox_array: ', array);
-    var pointGrid = turf.pointGrid(array, cellSide, options);
-    //turfLayer.addData(squareGrid)
-    console.log('pointGrid: ', pointGrid);
+    var squareGrid = turf.squareGrid(array, cellSide, options1);
+    turfLayer.addData(squareGrid)
+    //console.log('squareGrid: ', squareGrid);
 
-    console.log('ABAIXO: la la la: ');
-    var pointsWithin = turf.pointsWithinPolygon(pointGrid, buffered);
-    //turfLayer.addData(pointsWithin)
-    console.log('pointsWithin: ', pointsWithin);
+    // consider all squares and put a unique centroid
+    // var centroid = [];
+    // centroid = turf.centroid(squareGrid);
+    // console.log('centroid: ', centroid);
+    //turfLayer.addData(centroid)
 
-    var points = new L.Circle(pointsWithin, 232);
-    var square = L.rectangle(points.getBounds()).addTo(map);
-    console.log('ABAIXO2: bbox_array: ', square);
+    console.log('Amount of features: ', squareGrid.features.length);
 
+    // consider all squares and put a unique centroid for each one
+    var allFeatures = [];
+    for (var i = 0; i <= squareGrid.features.length; i++){
+      var feature = squareGrid.features[i];
+      if (typeof feature !== 'undefined') {
+        var polygon = turf.polygon(feature.geometry.coordinates);
+        allFeatures[i] = turf.centroid(polygon);
+        //turfLayer.addData(allFeatures)
+    }}
+    console.log('all features: ', allFeatures);
   }
+
 
   var turfLayer = L.geoJson(null, {
     style: function (feature) {
       var style = {
-        color: '#561196',
-        fillColor: 'yellow',
-        weight: 0.5
+        color: '#bada55', //'#561196',
+        //fillColor: null,
+        weight: 3,
+        fillOpacity: .0
       };
       return style;
     }
@@ -272,7 +290,7 @@ $(document).ready(function () {
     layerShp.addTo(drawnItems);
     drawControlFull.removeFrom(map);
     drawControlEditOnly.addTo(map)
-    PutBuffer(layerShp);
+    getPointsPolygon(layerShp);
       
     var type = e.layerType;
     if (type === 'polygon' || type === 'rectangle') {
