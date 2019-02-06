@@ -217,6 +217,8 @@ $(document).ready(function () {
     });
   });
 
+  var jsonCoords = null;
+
   function getPointsPolygon(layer) {
 
     var options = { units: 'meters' };
@@ -264,6 +266,10 @@ $(document).ready(function () {
         //turfLayer.addData(allFeatures)
     }}
     console.log('all features: ', allFeatures);
+
+    //jsonCoords = JSON.parse(JSON.stringify(allFeatures));
+    jsonCoords = JSON.stringify(allFeatures);
+    console.log('json: ', jsonCoords);
   }
 
 
@@ -630,36 +636,45 @@ function timeSeriesShp() {
     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
-  if (typeof shpfile !== "object" && shpfile === null) {
+  if (typeof jsonCoords === null) {
     //(typeof shpfile !== "object" && shpfile === null) {
        alert('Enter with the polygon!');
        $("#submitbutton").removeAttr("disabled");
     } else {
 
-    console.log('shp3: ', shpfile);
+    console.log('shp3: ', jsonCoords);
    
-    // var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
-    //   name_service: service_selected,
-    //   coverage: coverage_selected,
-    //   //longitude: $("#long").val(),
-    //   //latitude: $("#lat").val(),
-    //   bands: band_selected,
-    //   start_date: $("#from").val(),
-    //   end_date: $("#to").val(),
-    //   pre_filter: pre_filter_selected,
-    //   shp_file: shpfile,
-
-    var req = ocpu.call("TSplot", { // ocpu.rpc
-      ts_data: shpfile,
+    var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
+      name_service: service_selected,
+      coverage: coverage_selected,
+      bands: band_selected,
+      start_date: $("#from").val(),
+      end_date: $("#to").val(),
+      pre_filter: pre_filter_selected,
+      shp_file: jsonCoords,
     }, function (session) {
+      mySession = session;
+
+      console.log('mySession: ', session);
+
+      session.getObject(function (data) {
+        console.log('DATA: ', data);
+        var myData = data[0].time_series;
+        console.log('MyData: ', myData);
+        var series = prepareData(myData);
+        plotChart(series);
+
+    // var req = ocpu.call("TSplot", { // ocpu.rpc
+    //   ts_data: shpfile, 
+    // }, function (session) {
         
-        mySession = session;
-        console.log('session: ', session);
+    //     mySession = session;
+    //     console.log('session: ', session);
         
-        var req1 = $("#plotdiv").rplot("TSplot", {
-          ts_data: shpfile,
-        }).always(function () { //after request complete, re-enable the button
-          $("#submitbutton").removeAttr("disabled");
+    //     var req1 = $("#plotdiv").rplot("TSplot", {
+    //       ts_data: shpfile,
+    //     }).always(function () { //after request complete, re-enable the button
+    //       $("#submitbutton").removeAttr("disabled");
 
           // add row in table only if success plot time series
           $(function () {

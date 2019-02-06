@@ -29,67 +29,54 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
   #shp_file <- shp_file
-  wkt_file <- shp_file
-  crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-  shp_file <- rgeos::readWKT(text = wkt_file, p4s = crs)
+  json_data <- jsonlite::fromJSON(shp_file)
+
+  myPolygon <- tibble::tibble(longitude = numeric(),
+                              latitude = numeric())
+
+  myPolygon <- tibble::tibble(longitude = sapply(json_data$geometry$coordinates, `[[`, 1),
+                               latitude = sapply(json_data$geometry$coordinates, `[[`, 2))
 
   if(name_service == "WTSS-INPE" & coverage == "MOD13Q1"){
+
     coverage_wtss.tb <- sits::sits_coverage(service = name_service, name = coverage)
     # retrieve the time series associated with the point from the WTSS server
-    point.tb <- sits::sits_get_data(coverage = coverage_wtss.tb, bands = c(bands),
-                                    start_date = start_date, end_date = end_date,
-                                    file = shp_file)
+    # point.tb <- sits::sits_get_data(coverage = coverage_wtss.tb, bands = c(bands),
+    #                                 start_date = start_date, end_date = end_date,
+    #                                 file = shp_file)
+    points = list()
+    for (i in 1:nrow(myPolygon)){
+      points[[i]] <- sits::sits_get_data(coverage = coverage_wtss.tb,
+                                      longitude = as.numeric(myPolygon$longitude[i]),
+                                      latitude = as.numeric(myPolygon$latitude[i]),
+                                      bands = bands, start_date = start_date,
+                                      end_date = end_date)
+    }
+    point.tb <- do.call(rbind, points)
     return(point.tb)
   }
 
   if(name_service == "SATVEG" & (coverage == "terra" | coverage == "aqua" | coverage == "comb")){
     coverage_satveg.tb <- sits::sits_coverage(service = name_service, name = coverage)
     # retrieve the time series associated with the point from the WTSS server
-    point.tb <- sits::sits_get_data(coverage = coverage_satveg.tb,
-                                    prefilter = as.character(pre_filter),
-                                    file = shp_file)
+    # point.tb <- sits::sits_get_data(coverage = coverage_satveg.tb,
+    #                                 prefilter = as.character(pre_filter),
+    #                                 file = shp_file)
+    points = list()
+    for (i in 1:nrow(myPolygon)){
+      points[[i]] <- sits::sits_get_data(coverage = coverage_satveg.tb,
+                                         longitude = as.numeric(myPolygon$longitude[i]),
+                                         latitude = as.numeric(myPolygon$latitude[i]),
+                                         prefilter = as.character(pre_filter))
+    }
+    point.tb <- do.call(rbind, points)
     return(point.tb)
   }
 }
 
 
-# # update.packages(ask = FALSE, checkBuilt = TRUE)
-# shp_file = system.file("extdata/shapefiles/santa_cruz_minas.shp",
-#                         package = "sits")
-#
-# ocpusits::TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1",
-#                 shp_file = shp_file)
-#
-# coverage_wtss <- sits::sits_coverage(service = "WTSS-INPE", name = "MOD13Q1")
-# shp_file <- system.file("extdata/shapefiles/santa_cruz_minas.shp", package = "sits")
-# munic.tb <- sits::sits_get_data(coverage = coverage_wtss, file = shp_file)
-# munic.tb
-#
-# sf_shape <- sf::read_sf(shp_file)
-# bbox <- sf::st_bbox(sf_shape)
-# longitudes_shp <- munic.tb$longitude
-#
-# sits::sits_plot(munic.tb)
-#
-# shp <- sf::st_read(shp_file)
-# sp::plot(shp$geometry, lwd=0.1)
-#
-# sf::st_crs(shp)
-# crs <- sf::st_crs(shp)
-# crs$epsg == 4326
 
-# # https://askubuntu.com/questions/1010948/unable-to-install-geojson-package-for-r
-# file_js = geojsonio::geojson_read(x = "/home/inpe/Downloads/data.geojson", what = "sp")
-# file_js
-# sp::plot(file_js)
+#TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", shp_file = json_file)
 
-# wkt_file <- "/home/inpe/Downloads/mt.wkt"
-#
-# wkt_file <- ("POLYGON((38.4 -125,40.9 -125,40.9 -121.8,38.4 -121.8,38.4 -125))")
-# # "POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))")
-# crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-#
-# sp::plot(rgeos::readWKT(text = wkt_file, p4s = crs))
-
-
+#TSoperationSHP(name_service = "SATVEG", coverage = "terra", shp_file = json_file)
 
