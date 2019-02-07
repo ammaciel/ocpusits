@@ -79,3 +79,10 @@
     /* border: 1px solid red; */
 }
 
+/* d3 fill area for shapefile time series */
+path.area { 
+    stroke: lightgreen;
+	  fill: #e6ffe6;
+    opacity: 0.9
+}
+

@@ -623,6 +623,66 @@ var nrow = 0;
     });
   }
 
+  // plot map using D3.js C3
+  // https://jsfiddle.net/qy4xh1km/
+  // https://stackoverflow.com/questions/33164568/c3-js-fill-area-between-curves
+  function plotChart1(mySeries) {
+    var items = mySeries;
+    //Draw chart
+    var chart = c3.generate({
+      bindto: '#plotdiv',
+      data: {
+        json: items,
+        keys: { 
+          x: 'Index', 
+          value: ['ymin_sd', 'ymax_sd', 'mean', 'quantile_25', 'quantile_75'] 
+        },
+        colors: { 
+          ymin_sd: '#33cc99', 
+          ymax_sd: '#33cc33' },
+      },
+      axis: {
+        x: { 
+          type: 'timeseries', 
+          tick: { 
+            format: '%Y-%m-%d' //'%Y-%m-%d'
+          } 
+        },
+      },
+      subchart: {
+        show: true
+      },
+      zoom: {
+        enabled: false, // zoom with mouse scroll
+        //disableDefaultBehavior: true,
+      },
+      type: 'spline',
+    });
+    
+    function fillArea() {
+      var indexies = d3.range(items.length);
+      var yscale = chart.internal.y;
+      var xscale = chart.internal.x;
+
+      var area = d3.area()
+        .interpolate('linear')
+        .x(function (d) { return xscale(new Date(items[d].Index)); })
+        .y0(function (d) { return yscale(items[d].ymin_sd); })
+        .y1(function (d) { return yscale(items[d].ymax_sd); });
+
+      d3.select("#chart svg g").append('path')
+        .datum(indexies)
+        .attr('class', 'area')
+        //.attr('fill', 'red')
+        .attr('d', area);
+
+    }
+    
+    fillArea();
+  }
+
+
+
 
 function timeSeriesShp() {
     var service_selected = $("#services option:selected").val();
@@ -659,10 +719,10 @@ function timeSeriesShp() {
 
       session.getObject(function (data) {
         console.log('DATA: ', data);
-        var myData = data[0].time_series;
-        console.log('MyData: ', myData);
-        var series = prepareData(myData);
-        plotChart(series);
+        //var myData = data.time_series;
+        //console.log('MyData: ', myData);
+        //var series = prepareData1(data);
+        plotChart1(data);
 
     // var req = ocpu.call("TSplot", { // ocpu.rpc
     //   ts_data: shpfile, 
@@ -671,10 +731,10 @@ function timeSeriesShp() {
     //     mySession = session;
     //     console.log('session: ', session);
         
-    //     var req1 = $("#plotdiv").rplot("TSplot", {
-    //       ts_data: shpfile,
-    //     }).always(function () { //after request complete, re-enable the button
-    //       $("#submitbutton").removeAttr("disabled");
+        // var req1 = $("#plotdiv").rplot("TSplot", {
+        //   ts_data: mySession,
+        // }).always(function () { //after request complete, re-enable the button
+        //   $("#submitbutton").removeAttr("disabled");
 
           // add row in table only if success plot time series
           $(function () {
