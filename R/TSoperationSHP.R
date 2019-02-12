@@ -115,8 +115,10 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
                    sd = apply(data.df, 1, stats::sd),
                    ymin_sd = mean - sd,
                    ymax_sd = mean + sd,
-                   quantile_25 = apply(data.df, 1, function(x) stats::quantile(x, probs=c(1/4))),
-                   quantile_75 = apply(data.df, 1, function(x) stats::quantile(x, probs=c(3/4)))))
+                   quantile_25 = apply(data.df, 1,
+                                       function(x) stats::quantile(x, probs=c(1/4))),
+                   quantile_75 = apply(data.df, 1,
+                                       function(x) stats::quantile(x, probs=c(3/4)))))
   # plot(x = data.tb$Index, y = data.tb$mean, type = "l")
   # plot.ts(data.tb)
   return(points.df)

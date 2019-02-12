@@ -43,18 +43,6 @@ $(document).ready(function () {
 
     setTimeout(function () { $('.pointer').fadeOut('slow'); }, 3400);
 
-    //----- draw rectangle with pixel size
-    // var sideInMeters = 250;
-    // //drawSquare(map, center, { color: 'blue', weight: 1 }, sideInMeters);
-
-    // function drawBoxPixelSizeMODIS(map, center, properties, sideLengthInMeters) {
-    //   var circle = L.circle(center, sideLengthInMeters / 2).addTo(map);
-    //   var bounds = circle.getBounds();
-    //   map.removeLayer(circle); //hide circle
-    //   var rect = L.rectangle(bounds, properties).addTo(map);
-    //   return rect;
-    // }
-
     // icon leaflet example
     var markIcon = L.icon({
       iconUrl: 'maps-and-flags.png', //'leaf-green.png',
@@ -118,6 +106,7 @@ $(document).ready(function () {
     });
 
   //----- draw polygons in leaflet
+  /* ----------------- Turf.js */
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
 
@@ -149,83 +138,50 @@ $(document).ready(function () {
           fill: false,
         }
       },
-      circle: false //{
-        // metric: true,
-        // shapeOptions: {
-        //   color: '#0000FF',
-        //   color: '#662d91'
-        // }
-      //}
+      circle: { 
+        metric: true,
+        shapeOptions: {
+          color: '#bada55',
+          fill: false,
+        }
+      }
       ,
       marker: false,
       // marker: { //true
       //   icon: addMarker,
       // }
     },
-    // edit: {
-    //   featureGroup: drawnItems,
-    //   remove: true
-    // }
-  });
-
-  var drawControlEditOnly = new L.Control.Draw({
-    edit: {
-      featureGroup: drawnItems,
-      remove: true
-    },
-    draw: false
+     edit: {
+       featureGroup: drawnItems,
+       remove: false
+     }
   });
 
   map.addControl(drawControlFull);
 
-  // https://gist.github.com/vladimir-rybalko/4dfe03cbea888ed351658f225c9fd65c
-  function toWKT(layer) {
-    var lng, lat, coords = [];
-    if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-      var latlngs = layer.getLatLngs();
-      for (var i = 0; i < latlngs.length; i++) {
-        var latlngs1 = latlngs[i];
-        if (latlngs1.length) {
-          for (var j = 0; j < latlngs1.length; j++) {
-            coords.push(latlngs1[j].lng + " " + latlngs1[j].lat);
-            if (j === 0) {
-              lng = latlngs1[j].lng;
-              lat = latlngs1[j].lat;
-            }
-          }
-        }
-        else {
-          coords.push(latlngs[i].lng + " " + latlngs[i].lat);
-          if (i === 0) {
-            lng = latlngs[i].lng;
-            lat = latlngs[i].lat;
-          }
-        }
+  var turfLayer = L.geoJson(null, {
+    style: function (feature) {
+      var style = {
+        color: '#bada55', //'#561196',
+        //fillColor: null,
+        weight: 3,
+        fillOpacity: .0
       };
-      if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-        return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
-      } else if (layer instanceof L.Polyline) {
-        return "LINESTRING(" + coords.join(",") + ")";
-      }
-    } else if (layer instanceof L.Marker) {
-      return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
+      return style;
     }
-  };
-  map.on('draw:edited', function (e) {
-    e.layers.eachLayer(function (layer) {
-      console.log(toWKT(layer));
-    });
-  });
+  }).addTo(map);
 
   var jsonCoords = null;
 
-  function getPointsPolygon(layer) {
+  // get points from polygon using a grid
+  function getPointsPolygon(layer, measure) {
 
     var options = { units: 'meters' };
 
-    var buffered = turf.buffer(layer.toGeoJSON(), -200, options);
+    // internal buffer to get MODIS pixel only within polygon
+    var buffered = turf.buffer(layer.toGeoJSON(), measure, options);
     //turfLayer.addData(buffered)
-    //console.log('buffered: ', buffered); //JSON.stringify(buffered));
+    console.log('buffered: ', buffered); //JSON.stringify(buffered));
 
     // create bounding box of buffer layer
     var bbox = turf.bboxPolygon(turf.bbox(buffered));
@@ -242,17 +198,11 @@ $(document).ready(function () {
       units: 'meters',
       mask: buffered, // use buffer as mask
     };
-    var cellSide = 232;
+    var cellSide = 250;
     
     var squareGrid = turf.squareGrid(array, cellSide, options1);
     turfLayer.addData(squareGrid)
     //console.log('squareGrid: ', squareGrid);
-
-    // consider all squares and put a unique centroid
-    // var centroid = [];
-    // centroid = turf.centroid(squareGrid);
-    // console.log('centroid: ', centroid);
-    //turfLayer.addData(centroid)
 
     console.log('Amount of features: ', squareGrid.features.length);
 
@@ -273,80 +223,55 @@ $(document).ready(function () {
   }
 
 
-  var turfLayer = L.geoJson(null, {
-    style: function (feature) {
-      var style = {
-        color: '#bada55', //'#561196',
-        //fillColor: null,
-        weight: 3,
-        fillOpacity: .0
-      };
-      return style;
-    }
-  }).addTo(map);
-
-  var shpfile = null;
-
-  //----- enable and disable marker or polygon draw tool
+  //----- create a new shapefile
   map.on("draw:created", function (e) {
-   // drawnItems.clearLayers();
+    
     var layerShp = e.layer;
-    console.log('shp1: ', layerShp);
-
+    //console.log('shp1: ', layerShp);
+    drawnItems.clearLayers();
+    turfLayer.clearLayers();
+    
     layerShp.addTo(drawnItems);
-    drawControlFull.removeFrom(map);
-    drawControlEditOnly.addTo(map)
-    getPointsPolygon(layerShp);
+   // getPointsPolygon(layerShp, -225);
       
     var type = e.layerType;
     if (type === 'polygon' || type === 'rectangle') {
-      var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // squareMeters by default
+      getPointsPolygon(layerShp, -225);
+      
+      var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // meters by default
       areaInHa = (area / 10000).toFixed(2)
-      console.log(areaInHa);
-
-      shpfile = toWKT(layerShp);
-      console.log('shp2: ', shpfile);
-
+      console.log('area:', areaInHa);
 
       if (areaInHa >= 6000) {  
         var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
         //document.getElementById('message').innerHTML = message; //.value
         alert(message);
         drawnItems.clearLayers();
-        drawControlFull.addTo(map);
-        drawControlEditOnly.removeFrom(map)        
-      } // 6 ha
+        turfLayer.clearLayers();
+      } 
     }
-    // else if (type === 'circle' ) {
-    //   var area = 0;
-    //   var radius = e.layer.getRadius();
-    //   area = (Math.PI) * (radius * radius);
+    else if (type === 'circle') {
       
-    //   areaInHa = (area / 10000).toFixed(2)
-    //   console.log(areaInHa);
+      getPointsPolygon(layerShp, 500);
 
-    //   if (areaInHa >= 6000) {
-    //     var message = "Area more than 6000 ha: " + areaInHa + " ha.";
-    //     //document.getElementById('message').innerHTML = message; //.value
-    //     alert(message);
-    //     drawnItems.clearLayers();
-    //     drawControlFull.addTo(map);
-    //     drawControlEditOnly.removeFrom(map)
-    //   } // 6 ha
-    // } else {
-    //   var popupContent = areaInHa;
-    //   layerShp.addPopup(layerShp);
-    // }
+      var area = 0;
+      var radius = layerShp.getRadius();
+      area = (Math.PI) * (radius * radius);
 
-  });
+      areaInHa = (area / 10000).toFixed(2)
+      console.log('area:', areaInHa);
 
-  map.on("draw:deleted", function (e) {
-    check = Object.keys(drawnItems._layers).length;
-    console.log(check);
-    if (check === 0) {
-      drawControlEditOnly.removeFrom(map);
-      drawControlFull.addTo(map);
-    };
+      if (areaInHa >= 6000) {
+        var message = "Area more than 6000 ha: " + areaInHa + " ha.";
+        //document.getElementById('message').innerHTML = message; //.value
+        alert(message);
+        drawnItems.clearLayers();
+        turfLayer.clearLayers();
+      } 
+    } else {
+      console.log('::');
+    }
+
   });
 
   //---------
@@ -462,19 +387,7 @@ var nrow = 0;
     //console.log('mySeries: ', mySeries);
 
     return(mySeries)
-    // let series = mySeries.reduce((acc, curr) => {
-    //   if (acc.some(obj => obj.name === curr.name)) {
-    //     acc.forEach(obj => {
-    //       if (obj.name === curr.name) {
-    //         obj.data = obj.data + ", " + curr.data;
-    //       }
-    //     });
-    //   } else {
-    //     acc.push(curr);
-    //   }
-    //   return acc;
-    // }, []);
-    }
+  }
 
   // plot map using D3.js C3
   function plotChart(mySeries) {
@@ -626,8 +539,8 @@ var nrow = 0;
   // plot map using D3.js C3
   // https://jsfiddle.net/qy4xh1km/
   // https://stackoverflow.com/questions/33164568/c3-js-fill-area-between-curves
-  function plotChart1(mySeries) {
-    var items = mySeries;
+  function plotChart1(items) {
+    
     //Draw chart
     var chart = c3.generate({
       bindto: '#plotdiv',
@@ -635,11 +548,15 @@ var nrow = 0;
         json: items,
         keys: { 
           x: 'Index', 
-          value: ['ymin_sd', 'ymax_sd', 'mean', 'quantile_25', 'quantile_75'] 
+          value: ['ymin_sd', 'ymax_sd', 'mean'] //, 'quantile_25', 'quantile_75'] 
         },
         colors: { 
           ymin_sd: '#33cc99', 
-          ymax_sd: '#33cc33' },
+          ymax_sd: '#33cc33',
+          mean: '#0066ff',
+          //quantile_25: '#ff3300',
+          //quantile_75: '#cc0000' 
+        },
       },
       axis: {
         x: { 
@@ -656,32 +573,48 @@ var nrow = 0;
         enabled: false, // zoom with mouse scroll
         //disableDefaultBehavior: true,
       },
-      type: 'spline',
+      type: 'area',
     });
     
     function fillArea() {
+      // var indexies = d3.range(items.length);
+      // var yscale = chart.internal.y;
+      // var xscale = chart.internal.x;
+
+      // var area = d3.svg.area()
+      //   .interpolate('linear')
+      //   .x(function (d) { return xscale(new Date(items[d].Index)); })
+      //   .y0(function (d) { return yscale(items[d].ymin_sd); })
+      //   .y1(function (d) { return yscale(items[d].ymax_sd); });
+
+      // d3.select("#chart svg g").append('path')
+      //   .datum(indexies)
+      //   .attr('class', 'area')
+      //   .attr('fill', 'red')
+      //   .attr('d', area);
+
       var indexies = d3.range(items.length);
-      var yscale = chart.internal.y;
-      var xscale = chart.internal.x;
-
+      console.log('id: ', indexies);
+      var x = chart.internal.x;
+      console.log('x: ', x);
+      var y = chart.internal.y;
+      console.log('y: ', y);
+      
       var area = d3.area()
-        .interpolate('linear')
-        .x(function (d) { return xscale(new Date(items[d].Index)); })
-        .y0(function (d) { return yscale(items[d].ymin_sd); })
-        .y1(function (d) { return yscale(items[d].ymax_sd); });
+        .curve(d3.curveCardinal)
+        .x(function (d) { return x(new Date(items[d].Index)); })
+        .y0(function (d) { return y(items[d].ymin_sd); })
+        .y1(function (d) { return y(items[d].ymax_sd); });
 
-      d3.select("#chart svg g").append('path')
+      d3.select("plotdiv")
+        .append('path')
         .datum(indexies)
         .attr('class', 'area')
-        //.attr('fill', 'red')
+        .attr('fill', 'red')
         .attr('d', area);
-
-    }
-    
+   }
     fillArea();
   }
-
-
 
 
 function timeSeriesShp() {
@@ -697,8 +630,7 @@ function timeSeriesShp() {
     $("#submitbutton").attr("disabled", "disabled");
 
   if (typeof jsonCoords === null) {
-    //(typeof shpfile !== "object" && shpfile === null) {
-       alert('Enter with the polygon!');
+       alert('Draw polygon!');
        $("#submitbutton").removeAttr("disabled");
     } else {
 
@@ -724,29 +656,17 @@ function timeSeriesShp() {
         //var series = prepareData1(data);
         plotChart1(data);
 
-    // var req = ocpu.call("TSplot", { // ocpu.rpc
-    //   ts_data: shpfile, 
-    // }, function (session) {
-        
-    //     mySession = session;
-    //     console.log('session: ', session);
-        
-        // var req1 = $("#plotdiv").rplot("TSplot", {
-        //   ts_data: mySession,
-        // }).always(function () { //after request complete, re-enable the button
-        //   $("#submitbutton").removeAttr("disabled");
-
-          // add row in table only if success plot time series
-          $(function () {
-            nrow += 1;
-            var start_date1 = $("#from").val();
-            var end_date1 = $("#to").val();
-            var newRow = document.getElementById('tableSample').insertRow();
-            var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
-            //value='Delete'
-            newRow.innerHTML = dataService;
-          });
+        // add row in table only if success plot time series
+        $(function () {
+          nrow += 1;
+          var start_date1 = $("#from").val();
+          var end_date1 = $("#to").val();
+          var newRow = document.getElementById('tableSample').insertRow();
+          var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
+          //value='Delete'
+          newRow.innerHTML = dataService;
         });
+      });
     }).always(function () { //after request complete, re-enable the button
       $("#submitbutton").removeAttr("disabled");
       $("#submitbuttonfilter").removeAttr("disabled");
