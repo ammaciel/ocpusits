@@ -65,22 +65,8 @@
     color: white;
 }
 
-#map-wrapper {
-    width: 100%;
-    height: 500px;
-    position: relative;
-    /* border: 1px solid black; */
-}
-
-#button-wrapper {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    /* border: 1px solid red; */
-}
-
 /* d3 fill area for shapefile time series */
-.area {
+path.area {
   fill: lightsteelblue;
 }
 

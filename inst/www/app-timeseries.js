@@ -71,7 +71,7 @@ $(document).ready(function () {
       
       //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
     }
-    map.on('click', addMarker);
+    // map.on('click', addMarker);
     // map.on('click', zoomTo);
 
     //----- pan region marker from input lat long text
@@ -147,9 +147,9 @@ $(document).ready(function () {
       }
       ,
       marker: false,
-      // marker: { //true
-      //   icon: addMarker,
-      // }
+      //  marker: {
+      //    icon: addMarker,
+      //  }
     },
      edit: {
        featureGroup: drawnItems,
@@ -157,7 +157,7 @@ $(document).ready(function () {
      }
   });
 
-  map.addControl(drawControlFull);
+//  map.addControl(drawControlFull);
 
   var turfLayer = L.geoJson(null, {
     style: function (feature) {
@@ -173,35 +173,33 @@ $(document).ready(function () {
 
   var jsonCoords = null;
 
-  // get points from polygon using a grid
+  //----- get points from polygon using a grid
   function getPointsPolygon(layer, measure) {
 
-    var options = { units: 'meters' };
-
     // internal buffer to get MODIS pixel only within polygon
-    var buffered = turf.buffer(layer.toGeoJSON(), measure, options);
-    //turfLayer.addData(buffered)
-    console.log('buffered: ', buffered); //JSON.stringify(buffered));
+    var buffered = turf.buffer(layer.toGeoJSON(), measure, { units: 'meters' });
+    //turfLayer.addData(buffered);
+    //console.log('buffered: ', buffered); //JSON.stringify(buffered));
 
     // create bounding box of buffer layer
     var bbox = turf.bboxPolygon(turf.bbox(buffered));
-    console.log('bbox: ', bbox);
+    //console.log('bbox: ', bbox);
 
     // pass to array type
     var bbox_array = bbox.geometry.coordinates[0];
-    console.log('bbox_array: ', JSON.stringify(bbox_array));
+    //console.log('bbox_array: ', JSON.stringify(bbox_array));
     var array = [];
     array = bbox_array[0].concat(bbox_array[2]);
    
     // set options to squareGrid turf.js
-    var options1 = {
+    var options = {
       units: 'meters',
       mask: buffered, // use buffer as mask
     };
     var cellSide = 250;
     
-    var squareGrid = turf.squareGrid(array, cellSide, options1);
-    turfLayer.addData(squareGrid)
+    var squareGrid = turf.squareGrid(array, cellSide, options);
+    turfLayer.addData(squareGrid);
     //console.log('squareGrid: ', squareGrid);
 
     console.log('Amount of features: ', squareGrid.features.length);
@@ -232,15 +230,15 @@ $(document).ready(function () {
     turfLayer.clearLayers();
     
     layerShp.addTo(drawnItems);
-   // getPointsPolygon(layerShp, -225);
-      
+         
     var type = e.layerType;
+
     if (type === 'polygon' || type === 'rectangle') {
-      getPointsPolygon(layerShp, -225);
-      
+      getPointsPolygon(layerShp, -230);
+            
       var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // meters by default
       areaInHa = (area / 10000).toFixed(2)
-      console.log('area:', areaInHa);
+      console.log('area hectare:', areaInHa);
 
       if (areaInHa >= 6000) {  
         var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
@@ -249,17 +247,17 @@ $(document).ready(function () {
         drawnItems.clearLayers();
         turfLayer.clearLayers();
       } 
-    }
-    else if (type === 'circle') {
+    } if (type === 'circle') {
       
-      getPointsPolygon(layerShp, 500);
-
       var area = 0;
       var radius = layerShp.getRadius();
       area = (Math.PI) * (radius * radius);
 
       areaInHa = (area / 10000).toFixed(2)
-      console.log('area:', areaInHa);
+      console.log('area hectare:', areaInHa);
+
+      //-- internal buffer to get MODIS pixel only within polygon
+      getPointsPolygon(layerShp, radius-230);
 
       if (areaInHa >= 6000) {
         var message = "Area more than 6000 ha: " + areaInHa + " ha.";
@@ -271,43 +269,7 @@ $(document).ready(function () {
     } else {
       console.log('::');
     }
-
   });
-
-  //---------
-  // var mixButton = document.getElementById("mixButton");
-
-  // mixButton.addEventListener("click", capturePoint);
-
-  // //map.on("click", addMarker)
-  
-  
-  // function drawShape() {
-  //   console.log("drawShape - ok");
-  //   mixButton.removeEventListener("click", drawShape);
-  //   mixButton.addEventListener("click", capturePoint);
-  //   mixButton.value = "Capture Point";
-
-  //   drawnItems.clearLayers();
-  //   drawControlFull.removeFrom(map);
-  //   drawControlEditOnly.removeFrom(map);
-    
-  // }
-
-  // function capturePoint() {
-  //   console.log("capturePoint - ok");
-  //   mixButton.removeEventListener("click", capturePoint);
-  //   mixButton.addEventListener("click", drawShape);
-  //   mixButton.value = "Draw Shape";
-
-  //   //mixButton.removeEventListener("click", addMarker);
-  //   map.addControl(drawControlFull);
-  //   map.off("click", addMarker)
-  
-  // }
-//---------
-
-
 
 
 
@@ -576,44 +538,28 @@ var nrow = 0;
       type: 'area',
     });
     
-    function fillArea() {
-      // var indexies = d3.range(items.length);
-      // var yscale = chart.internal.y;
-      // var xscale = chart.internal.x;
-
-      // var area = d3.svg.area()
-      //   .interpolate('linear')
-      //   .x(function (d) { return xscale(new Date(items[d].Index)); })
-      //   .y0(function (d) { return yscale(items[d].ymin_sd); })
-      //   .y1(function (d) { return yscale(items[d].ymax_sd); });
-
-      // d3.select("#chart svg g").append('path')
-      //   .datum(indexies)
-      //   .attr('class', 'area')
-      //   .attr('fill', 'red')
-      //   .attr('d', area);
-
-      var indexies = d3.range(items.length);
-      console.log('id: ', indexies);
-      var x = chart.internal.x;
-      console.log('x: ', x);
-      var y = chart.internal.y;
-      console.log('y: ', y);
+  //   function fillArea() {
+  //     var indexies = d3.range(items.length);
+  //     console.log('id: ', indexies);
+  //     var x = chart.internal.x;
+  //     console.log('x: ', x);
+  //     var y = chart.internal.y;
+  //     console.log('y: ', y);
       
-      var area = d3.area()
-        .curve(d3.curveCardinal)
-        .x(function (d) { return x(new Date(items[d].Index)); })
-        .y0(function (d) { return y(items[d].ymin_sd); })
-        .y1(function (d) { return y(items[d].ymax_sd); });
+  //     var area = d3.area()
+  //       .curve(d3.curveCardinal)
+  //       .x(function (d) { return x(new Date(items[d].Index)); })
+  //       .y0(function (d) { return y(items[d].ymin_sd); })
+  //       .y1(function (d) { return y(items[d].ymax_sd); });
 
-      d3.select("plotdiv")
-        .append('path')
-        .datum(indexies)
-        .attr('class', 'area')
-        .attr('fill', 'red')
-        .attr('d', area);
-   }
-    fillArea();
+  //     d3.select("plotdiv")
+  //       .append('path')
+  //       .datum(indexies)
+  //       .attr('class', 'area')
+  //       .attr('fill', 'red')
+  //       .attr('d', area);
+  //  }
+  //   fillArea();
   }
 
 
@@ -634,7 +580,7 @@ function timeSeriesShp() {
        $("#submitbutton").removeAttr("disabled");
     } else {
 
-    console.log('shp3: ', jsonCoords);
+   // console.log('shp3: ', jsonCoords);
    
     var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
       name_service: service_selected,
@@ -650,22 +596,19 @@ function timeSeriesShp() {
       console.log('mySession: ', session);
 
       session.getObject(function (data) {
-        console.log('DATA: ', data);
-        //var myData = data.time_series;
-        //console.log('MyData: ', myData);
-        //var series = prepareData1(data);
+       // console.log('DATA: ', data);
         plotChart1(data);
 
         // add row in table only if success plot time series
-        $(function () {
-          nrow += 1;
-          var start_date1 = $("#from").val();
-          var end_date1 = $("#to").val();
-          var newRow = document.getElementById('tableSample').insertRow();
-          var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
-          //value='Delete'
-          newRow.innerHTML = dataService;
-        });
+        // $(function () {
+        //   nrow += 1;
+        //   var start_date1 = $("#from").val();
+        //   var end_date1 = $("#to").val();
+        //   var newRow = document.getElementById('tableSample').insertRow();
+        //   var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
+        //   //value='Delete'
+        //   newRow.innerHTML = dataService;
+        // });
       });
     }).always(function () { //after request complete, re-enable the button
       $("#submitbutton").removeAttr("disabled");
@@ -678,13 +621,49 @@ function timeSeriesShp() {
   }
 
 
+  var mixButton = document.getElementsByName("mode-options");
 
-  //button handler
-  $("#submitbutton").on("click", function (e) {
+  mixButton.addEventListener("click", capturePoint);
+
+ 
+  function drawShape() {
+    console.log("drawShape - ok");
+    mixButton.removeEventListener("click", drawShape);
+    mixButton.addEventListener("click", capturePoint);
+    
+    drawnItems.clearLayers();
+    drawControlFull.removeFrom(map);
+    
+    $("#submitbutton").on("click", function (e) {
+      e.preventDefault();
+      timeSeriesRaw();
+    });
+
+  }
+
+  function capturePoint() {
+    console.log("capturePoint - ok");
+    mixButton.removeEventListener("click", capturePoint);
+    mixButton.addEventListener("click", drawShape);
+    
+    //mixButton.removeEventListener("click", addMarker);
+    map.addControl(drawControlFull);
+    map.off("click", addMarker)
+
+    $("#submitbutton").on("click", function (e) {
       e.preventDefault();
       timeSeriesShp();
-      //timeSeriesRaw();     
-  });
+    });
+
+  }
+
+  
+  // //button handler
+  // $("#submitbutton").on("click", function (e) {
+  //     e.preventDefault();
+  //     // timeSeriesRaw();
+  //     timeSeriesShp();
+  //});
 
   //button handler
   $("#submitbuttonfilter").on("click", function (e) {
