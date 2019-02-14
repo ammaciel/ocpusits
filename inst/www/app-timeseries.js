@@ -5,8 +5,8 @@ $(document).ready(function () {
   // LEAFLET maps
   //------------------
 
-    var lat1 = -13.224772;
-    var long1 = -56.245043;
+    var lat1 = null;
+    var long1 = null;
     var newMarker = {};
     var newSquare = {};
     
@@ -14,7 +14,7 @@ $(document).ready(function () {
     var map = L.map('map', {
       fullscreenControl: true,
       cursor: false,
-    }).setView([lat1, long1], 13);
+    }).setView([-13.224772, -56.245043], 13);
 
     // zoom crontrol when mouse over
     map.scrollWheelZoom.disable();
@@ -71,9 +71,8 @@ $(document).ready(function () {
       
       //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
     }
-    // map.on('click', addMarker);
-    // map.on('click', zoomTo);
-
+     // map.on('click', addMarker);
+     
     //----- pan region marker from input lat long text
     $("button").click(function () {
       //Clear existing marker,
@@ -217,7 +216,7 @@ $(document).ready(function () {
 
     //jsonCoords = JSON.parse(JSON.stringify(allFeatures));
     jsonCoords = JSON.stringify(allFeatures);
-    console.log('json: ', jsonCoords);
+    //console.log('json: ', jsonCoords);
   }
 
 
@@ -247,7 +246,7 @@ $(document).ready(function () {
         drawnItems.clearLayers();
         turfLayer.clearLayers();
       } 
-    } if (type === 'circle') {
+    } else if (type === 'circle') {
       
       var area = 0;
       var radius = layerShp.getRadius();
@@ -266,8 +265,6 @@ $(document).ready(function () {
         drawnItems.clearLayers();
         turfLayer.clearLayers();
       } 
-    } else {
-      console.log('::');
     }
   });
 
@@ -286,6 +283,7 @@ var nrow = 0;
       case 'WTSS-INPE':
         $("#coverages").html("<option value='MOD13Q1'> MOD13Q1 </option>");
         $("#band").html("<option selected='selected' value='evi'> evi </option><option value='ndvi'> ndvi </option><option value='mir'> mir </option><option value='nir'> nir </option><option value='red'> red </option><option value='blue'> blue </option>");
+        $("#band_shp").html("<option selected='selected' value='evi'> evi </option><option value='ndvi'> ndvi </option><option value='mir'> mir </option><option value='nir'> nir </option><option value='red'> red </option><option value='blue'> blue </option>");
         $("#pre_filter").find("option").each(function () {
           $(this).attr("disabled", "disabled");
         });
@@ -335,9 +333,9 @@ var nrow = 0;
 
   //curl -v localhost:5656/ocpu/user/inpe/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
-  function prepareData(myData) {
+  function prepareData(data) {
     var mySeries = [];
-    myData.forEach(function (obj) {
+    data.forEach(function (obj) {
       for (var i = 1; i < Object.keys(obj).length; i++) {
         mySeries.push({
           band: Object.keys(obj)[i],
@@ -395,9 +393,11 @@ var nrow = 0;
     });
   }
 
-  var mySession = null;
+  var mySession_point = null;
 
    function timeSeriesRaw() {
+     //mySession_point = null; 
+     
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
     var coverage_selected = $("#coverages option:selected").val();
@@ -424,7 +424,7 @@ var nrow = 0;
       end_date: $("#to").val(),
       pre_filter: pre_filter_selected
     }, function (session) {
-        mySession = session;
+        mySession_point = session;
 
         session.getObject(function(data){
          // console.log('DATA: ', data);
@@ -452,6 +452,7 @@ var nrow = 0;
       $("#submitbutton").removeAttr("disabled");
     });
     }
+     
   }
 
   function timeSeriesFilter() {
@@ -467,17 +468,17 @@ var nrow = 0;
     console.log('sg-scale: ', sg_scale_selected);
 
     //disable the button to prevent multiple clicks
-    $("#submitbuttonfilter").attr("disabled", "disabled");
+    $("#submitbuttonfilter").attr("disabled", "disabled"); 
 
     var req = ocpu.call("TSfilter", { //rpc
-      ts_data: mySession,
+      ts_data: mySession_point,
       type_filter: filter_selected,
       wh_lambda: wh_lambda_selected,
       wh_differences: wh_diff_selected,
       sg_order: sg_order_selected,
       sg_scale: sg_scale_selected,
     }, function (session) {
-        //console.log('mySession: ', mySession);
+        //console.log('mySession_point: ', mySession_point);
           session.getObject(function (data) {
           var myData = data[0].time_series;
           //console.log('MyData filter: ', myData);
@@ -564,11 +565,12 @@ var nrow = 0;
 
 
 function timeSeriesShp() {
+  
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
     var coverage_selected = $("#coverages option:selected").val();
     console.log('coverage: ', coverage_selected);
-    var band_selected = $("#band").val();
+    var band_selected = $("#band_shp").val();
     console.log('bands: ', band_selected);
      var pre_filter_selected = $("#pre_filter").val();
      console.log('pre filter: ', pre_filter_selected);
@@ -591,12 +593,12 @@ function timeSeriesShp() {
       pre_filter: pre_filter_selected,
       shp_file: jsonCoords,
     }, function (session) {
-      mySession = session;
+        var mySession_shp = session;
 
-      console.log('mySession: ', session);
+        //console.log('mySession_shp: ', session);
 
-      session.getObject(function (data) {
-       // console.log('DATA: ', data);
+        session.getObject(function (data) {
+        // console.log('DATA: ', data);
         plotChart1(data);
 
         // add row in table only if success plot time series
@@ -620,50 +622,48 @@ function timeSeriesShp() {
     }
   }
 
-
-  var mixButton = document.getElementsByName("mode-options");
-
-  mixButton.addEventListener("click", capturePoint);
-
- 
-  function drawShape() {
-    console.log("drawShape - ok");
-    mixButton.removeEventListener("click", drawShape);
-    mixButton.addEventListener("click", capturePoint);
+  $('[name=mode-options]').change(function () {
+    // hide inputs, divs ... for each mode-options
+    $('#lat').toggle(this.value !== 'polygon');
+    $('#long').toggle(this.value !== 'polygon');
+    $('#showLatLong').toggle(this.value !== 'polygon');
+    $('#band_shp').toggle(this.value !== 'point');
+    $('#band').toggle(this.value !== 'polygon');
+    $('#title-chart-filter').toggle(this.value !== 'polygon');
+    $('#filter').toggle(this.value !== 'polygon');
+    $('#filter-group').toggle(this.value !== 'polygon');
+    $('#filter-whit').toggle(this.value !== 'polygon');
+    $('#filter-sg').toggle(this.value !== 'polygon');
+    $('#submitbuttonfilter').toggle(this.value !== 'polygon');
+                       
+    if ($('#get-point').is(':checked')) {   
     
-    drawnItems.clearLayers();
-    drawControlFull.removeFrom(map);
-    
-    $("#submitbutton").on("click", function (e) {
-      e.preventDefault();
-      timeSeriesRaw();
-    });
+      map.on('click', addMarker);
+      drawnItems.clearLayers();
+      turfLayer.clearLayers();
+      drawControlFull.removeFrom(map);
 
-  }
+      // https://stackoverflow.com/questions/9240854/jquery-function-executed-more-than-once
+      $("#submitbutton").unbind('click').click( function (e) {
+        e.preventDefault();
+        timeSeriesRaw();
+        //$(this).off('click');  
+      });
+    } 
+    else if ($('#get-polygon').is(':checked')) { 
+      
+      map.removeLayer(newMarker);
+      map.addControl(drawControlFull);
+      map.off("click", addMarker)
 
-  function capturePoint() {
-    console.log("capturePoint - ok");
-    mixButton.removeEventListener("click", capturePoint);
-    mixButton.addEventListener("click", drawShape);
-    
-    //mixButton.removeEventListener("click", addMarker);
-    map.addControl(drawControlFull);
-    map.off("click", addMarker)
-
-    $("#submitbutton").on("click", function (e) {
-      e.preventDefault();
-      timeSeriesShp();
-    });
-
-  }
-
+      $("#submitbutton").unbind('click').click( function (e) {
+        e.preventDefault();
+        timeSeriesShp();
+        //$(this).off('click');  
+      });
+    }
+  });
   
-  // //button handler
-  // $("#submitbutton").on("click", function (e) {
-  //     e.preventDefault();
-  //     // timeSeriesRaw();
-  //     timeSeriesShp();
-  //});
 
   //button handler
   $("#submitbuttonfilter").on("click", function (e) {
