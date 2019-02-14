@@ -70,5 +70,22 @@ path.area {
   fill: lightsteelblue;
 }
 
- 
+#submitbutton:disabled {
+    background-image: url(../www/loading2.gif);
+    background-repeat:no-repeat;
+    width: 223px;
+    height: 26px;
+    border: none;
+    text-align: center;
+    text-decoration: none;    
+}
 
+/* #submitbuttonfilter:disabled {
+    background-image: url(../www/loading2.gif);
+    background-repeat:no-repeat;
+    width: 223px;
+    height: 26px;
+    border: none;
+    text-align: center;
+    text-decoration: none;    
+} */

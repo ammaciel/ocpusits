@@ -5,104 +5,101 @@ $(document).ready(function () {
   // LEAFLET maps
   //------------------
 
-    var lat1 = null;
-    var long1 = null;
-    var newMarker = {};
-    var newSquare = {};
-    
-    //----- create map object, tell it to live in 'map' div and give initial latitude, longitude, zoom values
-    var map = L.map('map', {
-      fullscreenControl: true,
-      cursor: false,
-    }).setView([-13.224772, -56.245043], 13);
+  // global variables
+  var lat1 = null;
+  var long1 = null;
+  var newMarker = {};
+  
+  //----- create map object, tell it to live in 'map' div and give initial latitude, longitude, zoom values
+  var map = L.map('map', {
+    fullscreenControl: true,
+    cursor: false,
+  }).setView([-13.224772, -56.245043], 13);
 
-    // zoom crontrol when mouse over
-    map.scrollWheelZoom.disable();
-    map.on('focus', () => { map.scrollWheelZoom.enable(); });
-    map.on('blur', () => { map.scrollWheelZoom.disable(); });
+  // zoom crontrol when mouse over
+  map.scrollWheelZoom.disable();
+  map.on('focus', () => { map.scrollWheelZoom.enable(); });
+  map.on('blur', () => { map.scrollWheelZoom.disable(); });
 
-    //  add base map tiles from OpenStreetMap and attribution info to 'map' div
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-	 }).addTo(map);
+  //  add base map tiles from OpenStreetMap and attribution info to 'map' div
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+  }).addTo(map);
 
-    //L.esri.basemapLayer('Imagery').addTo(map);
-    L.esri.basemapLayer('ImageryLabels').addTo(map);
+  //L.esri.basemapLayer('Imagery').addTo(map);
+  L.esri.basemapLayer('ImageryLabels').addTo(map);
 
-    //----- search data
-    var searchControl = new L.esri.Controls.Geosearch().addTo(map);
+  //----- search data
+  var searchControl = new L.esri.Controls.Geosearch().addTo(map);
 
-    var results = new L.LayerGroup().addTo(map);
+  var results = new L.LayerGroup().addTo(map);
 
-    searchControl.on('results', function (data) {
-      results.clearLayers();
-      for (var i = data.results.length - 1; i >= 0; i--) {
-        results.addLayer(L.marker(data.results[i].latlng));
-      }
-    });
-
-    setTimeout(function () { $('.pointer').fadeOut('slow'); }, 3400);
-
-    // icon leaflet example
-    var markIcon = L.icon({
-      iconUrl: 'maps-and-flags.png', //'leaf-green.png',
-      iconSize: [50, 50], // size of the icon
-      iconAnchor: [25, 50], // point of the icon which will correspond to marker's location
-      popupAnchor: [0, -50] // point from which the popup should open relative to the iconAnchor
-    });
-
-    //----- new marker according to click
-    function addMarker(e){
-      //Clear existing marker,
-      if (newMarker !== undefined) {
-        map.removeLayer(newMarker);
-        //map.removeLayer(newSquare);
-      }
-      // Add marker to map at click location; add popup window
-      newMarker = L.marker([e.latlng.lat, e.latlng.lng], {
-        icon: markIcon
-      }).addTo(map).bindPopup("Latitude: " + e.latlng.lat + ", Longitude: " +  e.latlng.lng);//.openPopup;
-            
-      lat1 = e.latlng.lat;
-      long1 = e.latlng.lng;
-      document.getElementById('long').value = long1;
-      document.getElementById('lat').value = lat1;
-      console.log("Latitude: " + lat1 + ", Longitude: " + long1);
-      
-      //newSquare = drawBoxPixelSizeMODIS(map, [e.latlng.lat, e.latlng.lng], { color: 'yellow', fillOpacity: 0 }, sideInMeters); //, weight: 1
+  searchControl.on('results', function (data) {
+    results.clearLayers();
+    for (var i = data.results.length - 1; i >= 0; i--) {
+      results.addLayer(L.marker(data.results[i].latlng));
     }
-     // map.on('click', addMarker);
-     
+  });
+
+  setTimeout(function () { $('.pointer').fadeOut('slow'); }, 3400);
+
+  // icon leaflet example
+  var markIcon = L.icon({
+    iconUrl: 'maps-and-flags.png', //'leaf-green.png',
+    iconSize: [50, 50], // size of the icon
+    iconAnchor: [25, 50], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -50] // point from which the popup should open relative to the iconAnchor
+  });
+
+  //----- new marker according to click
+  map.on('click', addMarker);
+  
+  function addMarker(e){
+    //Clear existing marker,
+    if (newMarker !== undefined) {
+      map.removeLayer(newMarker);
+    }
+    // Add marker to map at click location; add popup window
+    newMarker = L.marker([e.latlng.lat, e.latlng.lng], {
+      icon: markIcon
+    }).addTo(map).bindPopup("Latitude: " + e.latlng.lat + ", Longitude: " +  e.latlng.lng);//.openPopup;
+          
+    lat1 = e.latlng.lat;
+    long1 = e.latlng.lng;
+    document.getElementById('long').value = long1;
+    document.getElementById('lat').value = lat1;
+    console.log("Latitude: " + lat1 + ", Longitude: " + long1);
+  }
+    
     //----- pan region marker from input lat long text
-    $("button").click(function () {
-      //Clear existing marker,
-      if (newMarker !== undefined) {
-        map.removeLayer(newMarker);
-      }
-      lat1 = document.getElementById("lat").value;
-      long1 = document.getElementById("long").value;
-      console.log("Latitude: " + lat1 + ", Longitude: " + long1);
-      map.panTo(new L.LatLng(lat1, long1));
-      // Add marker to map at click location; add popup window
-      newMarker = L.marker([lat1, long1], {
-        icon: markIcon,
-        draggable: true
-      }).addTo(map).bindPopup("Latitude: " + lat1 + ", Longitude: " + long1);//.openPopup;
-    });
+  $("#showLatLong").click(function () {
+    //Clear existing marker,
+    if (newMarker !== undefined) {
+      map.removeLayer(newMarker);
+    }
+    lat1 = document.getElementById("lat").value;
+    long1 = document.getElementById("long").value;
+    console.log("Latitude: " + lat1 + ", Longitude: " + long1);
+    map.panTo(new L.LatLng(lat1, long1));
+    // Add marker to map at click location; add popup window
+    newMarker = L.marker([lat1, long1], {
+      icon: markIcon,
+      draggable: true
+    }).addTo(map).bindPopup("Latitude: " + lat1 + ", Longitude: " + long1);//.openPopup;
+  });
 
-    // mousemove text with coordinates
-    var lat, lng, coords;
-    map.addEventListener('mousemove', function (ev) {
-      lat = ev.latlng.lat;
-      lng = ev.latlng.lng;
-      coords = "Lng: " + lng + ", Lat" + lat;
+  // mousemove text with coordinates
+  var lat, lng, coords;
+  map.addEventListener('mousemove', function (ev) {
+    lat = ev.latlng.lat;
+    lng = ev.latlng.lng;
+    coords = "Lng: " + lng + ", Lat" + lat;
 
-      document.getElementById('coord').innerHTML = coords; //.value
-      // console.log("Coordinates: " + lat + ', ' + lng);
-      // alert(lat + ' - ' + lng);
+    document.getElementById('coord').innerHTML = coords; //.value
+    // alert(lat + ' - ' + lng);
 
-      return false; // To disable default popup.
-    });
+    return false; // To disable default popup.
+  });
 
   //----- draw polygons in leaflet
   /* ----------------- Turf.js */
@@ -155,8 +152,7 @@ $(document).ready(function () {
        remove: false
      }
   });
-
-//  map.addControl(drawControlFull);
+ //  map.addControl(drawControlFull);
 
   var turfLayer = L.geoJson(null, {
     style: function (feature) {
@@ -270,14 +266,15 @@ $(document).ready(function () {
 
 
 
-//------------------
-// OPENCPU with R
-//------------------
+  //------------------
+  // OPENCPU with R
+  //------------------
 
-// global variable used to save the session object
-var nrow = 0;
-// var nextTab = 0;
+  // global variable used to save the session object
+  var nrow = 0;
+  var mySession_point = null;
 
+  //----- define values of the input
   $("#services").change(function () {
     switch ($(this).val()) {
       case 'WTSS-INPE':
@@ -331,8 +328,7 @@ var nrow = 0;
   });
 
 
-  //curl -v localhost:5656/ocpu/user/inpe/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
-
+  //----- define graphic properties D3.js C3
   function prepareData(data) {
     var mySeries = [];
     data.forEach(function (obj) {
@@ -345,7 +341,6 @@ var nrow = 0;
       }
     });
     //console.log('mySeries: ', mySeries);
-
     return(mySeries)
   }
 
@@ -393,26 +388,88 @@ var nrow = 0;
     });
   }
 
-  var mySession_point = null;
+  // plot map using D3.js C3
+  // https://jsfiddle.net/qy4xh1km/
+  // https://stackoverflow.com/questions/33164568/c3-js-fill-area-between-curves
+  function plotChartShp(items) {
+    //Draw chart
+    var chart = c3.generate({
+      bindto: '#plotdiv',
+      data: {
+        json: items,
+        keys: {
+          x: 'Index',
+          value: ['ymin_sd', 'ymax_sd', 'mean'] //, 'quantile_25', 'quantile_75'] 
+        },
+        colors: {
+          ymin_sd: '#699402', //'#33cc99', 
+          ymax_sd: '#0946B2', //'#33cc33',
+          mean: '#C92918',  //'#0066ff',
+          //quantile_25: '#ff3300',
+          //quantile_75: '#cc0000' 
+        },
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%Y-%m-%d' //'%Y-%m-%d'
+          }
+        },
+      },
+      subchart: {
+        show: true
+      },
+      zoom: {
+        enabled: false, // zoom with mouse scroll
+        //disableDefaultBehavior: true,
+      },
+      type: 'area',
+    });
 
-   function timeSeriesRaw() {
-     //mySession_point = null; 
-     
+    //   function fillArea() {
+    //     var indexies = d3.range(items.length);
+    //     console.log('id: ', indexies);
+    //     var x = chart.internal.x;
+    //     console.log('x: ', x);
+    //     var y = chart.internal.y;
+    //     console.log('y: ', y);
+
+    //     var area = d3.area()
+    //       .curve(d3.curveCardinal)
+    //       .x(function (d) { return x(new Date(items[d].Index)); })
+    //       .y0(function (d) { return y(items[d].ymin_sd); })
+    //       .y1(function (d) { return y(items[d].ymax_sd); });
+
+    //     d3.select("plotdiv")
+    //       .append('path')
+    //       .datum(indexies)
+    //       .attr('class', 'area')
+    //       .attr('fill', 'red')
+    //       .attr('d', area);
+    //  }
+    //   fillArea();
+  }
+
+  //----- functions to capture a single point
+  function timeSeriesRaw() {
+    //mySession_point = null; 
+    
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
     var coverage_selected = $("#coverages option:selected").val();
     console.log('coverage: ', coverage_selected);
     var band_selected = $("#band").val();
     console.log('bands: ', band_selected);
-     var pre_filter_selected = $("#pre_filter").val();
-     console.log('pre filter: ', pre_filter_selected);
+    var pre_filter_selected = $("#pre_filter").val();
+    console.log('pre filter: ', pre_filter_selected);
     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
-     if ($('#long').val() == '' || $('#lat').val() == '') {
-       alert('Enter with longitude and latitude!');
-       $("#submitbutton").removeAttr("disabled");
-     } else {
+    if ($('#long').val() == '' || $('#lat').val() == '') {
+      alert('Enter with longitude and latitude!');
+      $("#submitbutton").removeAttr("disabled");
+    } else {
 
     var req = ocpu.call("TSoperation", { // ocpu.rpc
       name_service: service_selected,
@@ -427,7 +484,7 @@ var nrow = 0;
         mySession_point = session;
 
         session.getObject(function(data){
-         // console.log('DATA: ', data);
+        // console.log('DATA: ', data);
           var myData = data[0].time_series;
           console.log('MyData: ', myData);
           var series = prepareData(myData);
@@ -452,9 +509,9 @@ var nrow = 0;
       $("#submitbutton").removeAttr("disabled");
     });
     }
-     
   }
 
+  // filters
   function timeSeriesFilter() {
     var filter_selected = $("#filter option:selected").val();
     console.log('filter: ', filter_selected);
@@ -499,73 +556,8 @@ var nrow = 0;
     });
   }
 
-  // plot map using D3.js C3
-  // https://jsfiddle.net/qy4xh1km/
-  // https://stackoverflow.com/questions/33164568/c3-js-fill-area-between-curves
-  function plotChart1(items) {
-    
-    //Draw chart
-    var chart = c3.generate({
-      bindto: '#plotdiv',
-      data: {
-        json: items,
-        keys: { 
-          x: 'Index', 
-          value: ['ymin_sd', 'ymax_sd', 'mean'] //, 'quantile_25', 'quantile_75'] 
-        },
-        colors: { 
-          ymin_sd: '#33cc99', 
-          ymax_sd: '#33cc33',
-          mean: '#0066ff',
-          //quantile_25: '#ff3300',
-          //quantile_75: '#cc0000' 
-        },
-      },
-      axis: {
-        x: { 
-          type: 'timeseries', 
-          tick: { 
-            format: '%Y-%m-%d' //'%Y-%m-%d'
-          } 
-        },
-      },
-      subchart: {
-        show: true
-      },
-      zoom: {
-        enabled: false, // zoom with mouse scroll
-        //disableDefaultBehavior: true,
-      },
-      type: 'area',
-    });
-    
-  //   function fillArea() {
-  //     var indexies = d3.range(items.length);
-  //     console.log('id: ', indexies);
-  //     var x = chart.internal.x;
-  //     console.log('x: ', x);
-  //     var y = chart.internal.y;
-  //     console.log('y: ', y);
-      
-  //     var area = d3.area()
-  //       .curve(d3.curveCardinal)
-  //       .x(function (d) { return x(new Date(items[d].Index)); })
-  //       .y0(function (d) { return y(items[d].ymin_sd); })
-  //       .y1(function (d) { return y(items[d].ymax_sd); });
-
-  //     d3.select("plotdiv")
-  //       .append('path')
-  //       .datum(indexies)
-  //       .attr('class', 'area')
-  //       .attr('fill', 'red')
-  //       .attr('d', area);
-  //  }
-  //   fillArea();
-  }
-
-
-function timeSeriesShp() {
-  
+ 
+  function timeSeriesShp() {
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
     var coverage_selected = $("#coverages option:selected").val();
@@ -577,51 +569,42 @@ function timeSeriesShp() {
     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
-  if (typeof jsonCoords === null) {
-       alert('Draw polygon!');
-       $("#submitbutton").removeAttr("disabled");
-    } else {
+    if (typeof jsonCoords === null) {
+        alert('Draw polygon!');
+        $("#submitbutton").removeAttr("disabled");
+      } else {
 
-   // console.log('shp3: ', jsonCoords);
-   
-    var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
-      name_service: service_selected,
-      coverage: coverage_selected,
-      bands: band_selected,
-      start_date: $("#from").val(),
-      end_date: $("#to").val(),
-      pre_filter: pre_filter_selected,
-      shp_file: jsonCoords,
-    }, function (session) {
-        var mySession_shp = session;
+    // console.log('shp3: ', jsonCoords);
+    
+      var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
+        name_service: service_selected,
+        coverage: coverage_selected,
+        bands: band_selected,
+        start_date: $("#from").val(),
+        end_date: $("#to").val(),
+        pre_filter: pre_filter_selected,
+        shp_file: jsonCoords,
+      }, function (session) {
+          var mySession_shp = session;
 
-        //console.log('mySession_shp: ', session);
+          //console.log('mySession_shp: ', session);
 
-        session.getObject(function (data) {
-        // console.log('DATA: ', data);
-        plotChart1(data);
+          session.getObject(function (data) {
+          // console.log('DATA: ', data);
+          plotChartShp(data);
 
-        // add row in table only if success plot time series
-        // $(function () {
-        //   nrow += 1;
-        //   var start_date1 = $("#from").val();
-        //   var end_date1 = $("#to").val();
-        //   var newRow = document.getElementById('tableSample').insertRow();
-        //   var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
-        //   //value='Delete'
-        //   newRow.innerHTML = dataService;
-        // });
+        });
+      }).always(function () { //after request complete, re-enable the button
+        $("#submitbutton").removeAttr("disabled");
+        $("#submitbuttonfilter").removeAttr("disabled");
+      }).fail(function () { //if R returns an error, alert the error message
+        alert("Failed to plot time series!\nDefine service, coverage and LatLong input!");
+        $("#submitbutton").removeAttr("disabled");
       });
-    }).always(function () { //after request complete, re-enable the button
-      $("#submitbutton").removeAttr("disabled");
-      $("#submitbuttonfilter").removeAttr("disabled");
-    }).fail(function () { //if R returns an error, alert the error message
-      alert("Failed to plot time series!\nDefine service, coverage and LatLong input!");
-      $("#submitbutton").removeAttr("disabled");
-    });
+      }
     }
-  }
 
+  //----- change the input mode, if point or polygon
   $('[name=mode-options]').change(function () {
     // hide inputs, divs ... for each mode-options
     $('#lat').toggle(this.value !== 'polygon');
@@ -652,9 +635,9 @@ function timeSeriesShp() {
     } 
     else if ($('#get-polygon').is(':checked')) { 
       
+      map.off("click", addMarker)
       map.removeLayer(newMarker);
       map.addControl(drawControlFull);
-      map.off("click", addMarker)
 
       $("#submitbutton").unbind('click').click( function (e) {
         e.preventDefault();
@@ -670,6 +653,7 @@ function timeSeriesShp() {
       e.preventDefault();
       timeSeriesFilter();
   });
+
 
   //------------------
   // TABLE add samples
