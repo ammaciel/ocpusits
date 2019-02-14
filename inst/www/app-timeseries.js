@@ -14,6 +14,7 @@ $(document).ready(function () {
   var map = L.map('map', {
     fullscreenControl: true,
     cursor: false,
+    minZoom: 5,
   }).setView([-13.224772, -56.245043], 13);
 
   // zoom crontrol when mouse over
@@ -28,6 +29,9 @@ $(document).ready(function () {
 
   //L.esri.basemapLayer('Imagery').addTo(map);
   L.esri.basemapLayer('ImageryLabels').addTo(map);
+  
+  //---- scale map
+  L.control.scale().addTo(map);
 
   //----- search data
   var searchControl = new L.esri.Controls.Geosearch().addTo(map);
@@ -646,7 +650,6 @@ $(document).ready(function () {
       });
     }
   });
-  
 
   //button handler
   $("#submitbuttonfilter").on("click", function (e) {
@@ -659,16 +662,16 @@ $(document).ready(function () {
   // TABLE add samples
   //------------------
 
-   // remove row of table
-    $('#tableSample').on('click', 'button[type="button"]', function () { //'input[type="button"]'
-      $(this).closest('tr').remove();
-    });
-    $('p button[type="button"]').click(function () {
-      $('#tableSample').append('<tr><td></td><td><input type="button" value="Delete" /></td></tr>');
+  // remove row of table
+  $('#tableSample').on('click', 'button[type="button"]', function () { //'input[type="button"]'
+    $(this).closest('tr').remove();
+  });
+  $('p button[type="button"]').click(function () {
+    $('#tableSample').append('<tr><td></td><td><input type="button" value="Delete" /></td></tr>');
   });
 
-    // SAVE table in file
-// source: https://stackoverflow.com/questions/40428850/how-to-export-data-from-table-to-csv-file-using-jquery
+  // SAVE table in file
+  // source: https://stackoverflow.com/questions/40428850/how-to-export-data-from-table-to-csv-file-using-jquery
   $('#saveCSV').click(function() {
     var titles = [];
     var data = [];
@@ -739,6 +742,5 @@ $(document).ready(function () {
     });
     return initial + row;
   }
-
 });
 
