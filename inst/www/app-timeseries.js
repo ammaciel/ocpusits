@@ -109,7 +109,7 @@ $(document).ready(function () {
   /* ----------------- Turf.js */
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
-
+  
   // draw control
   var drawControlFull = new L.Control.Draw({
     position: 'topright',
@@ -229,7 +229,7 @@ $(document).ready(function () {
     turfLayer.clearLayers();
     
     layerShp.addTo(drawnItems);
-         
+             
     var type = e.layerType;
 
     if (type === 'polygon' || type === 'rectangle') {
