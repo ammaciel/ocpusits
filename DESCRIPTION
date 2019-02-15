@@ -4,7 +4,7 @@ Title: OpenCPU with Time Series
 Version: 0.1.0
 Author: Adeline Maciel [aut, cre]
 Maintainer: Adeline Maciel <adelsud6@gmail.com>
-Description: OpenCPU Time Series using opencpu (ocpusits) for the integration between opencpu and R to Web applications. With this formalism is possible to discover if exist a particular event in data set.
+Description: OpenCPU Time Series using opencpu (ocpusits) for the integration between opencpu and R to Web applications. With this webapp is possible to capture points of time series from a map leaflet.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
