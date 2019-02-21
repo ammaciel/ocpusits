@@ -3,6 +3,7 @@ FROM opencpu/base
 # update sources list
 RUN apt-get clean
 RUN apt-get update
+RUN apt-get install -y --no-install-recommends apt-utils
 
 # install basic apps, one per line for better caching
 RUN apt-get -qy install libudunits2-dev
