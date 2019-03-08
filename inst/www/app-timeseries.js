@@ -623,7 +623,15 @@ $(document).ready(function () {
     $('#filter-sg').toggle(this.value !== 'polygon');
     $('#submitbuttonfilter').toggle(this.value !== 'polygon');
                        
-    if ($('#get-point').is(':checked')) {   
+    if ($('#get-start').is(':checked')) {
+
+      map.off('click', addMarker);
+      drawnItems.clearLayers();
+      turfLayer.clearLayers();
+      drawControlFull.removeFrom(map);
+
+    }
+    else if ($('#get-point').is(':checked')) {   
     
       map.on('click', addMarker);
       drawnItems.clearLayers();
