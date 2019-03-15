@@ -3,7 +3,6 @@
 export(TSfilter)
 export(TSoperation)
 export(TSoperationSHP)
-export(TSplot)
 importFrom(jsonlite,fromJSON)
 importFrom(magrittr,"%>%")
 importFrom(sits,sits_coverage)

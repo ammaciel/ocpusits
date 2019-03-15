@@ -9,7 +9,7 @@
 #'
 #' @param ts_data       data set with point via WTSS.
 #' @return Plot time series information according to the bands and time
-#' @export
+## @export
 #'
 #' @importFrom sits sits_plot
 # @importFrom sp plot

@@ -9,7 +9,7 @@ $(document).ready(function () {
   var lat1 = null;
   var long1 = null;
   var newMarker = {};
-  
+
   //----- create map object, tell it to live in 'map' div and give initial latitude, longitude, zoom values
   var map = L.map('map', {
     fullscreenControl: true,
@@ -29,7 +29,7 @@ $(document).ready(function () {
 
   //L.esri.basemapLayer('Imagery').addTo(map);
   L.esri.basemapLayer('ImageryLabels').addTo(map);
-  
+
   //---- scale map
   L.control.scale().addTo(map);
 
@@ -57,7 +57,7 @@ $(document).ready(function () {
 
   //----- new marker according to click
   map.on('click', addMarker);
-  
+
   function addMarker(e){
     //Clear existing marker,
     if (newMarker !== undefined) {
@@ -67,14 +67,14 @@ $(document).ready(function () {
     newMarker = L.marker([e.latlng.lat, e.latlng.lng], {
       icon: markIcon
     }).addTo(map).bindPopup("Latitude: " + e.latlng.lat + ", Longitude: " +  e.latlng.lng);//.openPopup;
-          
+
     lat1 = e.latlng.lat;
     long1 = e.latlng.lng;
     document.getElementById('long').value = long1;
     document.getElementById('lat').value = lat1;
     console.log("Latitude: " + lat1 + ", Longitude: " + long1);
   }
-    
+
     //----- pan region marker from input lat long text
   $("#showLatLong").click(function () {
     //Clear existing marker,
@@ -109,7 +109,7 @@ $(document).ready(function () {
   /* ----------------- Turf.js */
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
-  
+
   // draw control
   var drawControlFull = new L.Control.Draw({
     position: 'topright',
@@ -138,7 +138,7 @@ $(document).ready(function () {
           fill: false,
         }
       },
-      circle: { 
+      circle: {
         metric: true,
         shapeOptions: {
           color: '#bada55',
@@ -189,14 +189,14 @@ $(document).ready(function () {
     //console.log('bbox_array: ', JSON.stringify(bbox_array));
     var array = [];
     array = bbox_array[0].concat(bbox_array[2]);
-   
+
     // set options to squareGrid turf.js
     var options = {
       units: 'meters',
       mask: buffered, // use buffer as mask
     };
     var cellSide = 250;
-    
+
     var squareGrid = turf.squareGrid(array, cellSide, options);
     turfLayer.addData(squareGrid);
     //console.log('squareGrid: ', squareGrid);
@@ -222,32 +222,32 @@ $(document).ready(function () {
 
   //----- create a new shapefile
   map.on("draw:created", function (e) {
-    
+
     var layerShp = e.layer;
     //console.log('shp1: ', layerShp);
     drawnItems.clearLayers();
     turfLayer.clearLayers();
-    
+
     layerShp.addTo(drawnItems);
-             
+
     var type = e.layerType;
 
     if (type === 'polygon' || type === 'rectangle') {
       getPointsPolygon(layerShp, -230);
-            
+
       var area = L.GeometryUtil.geodesicArea(layerShp.getLatLngs()); // meters by default
       areaInHa = (area / 10000).toFixed(2)
       console.log('area hectare:', areaInHa);
 
-      if (areaInHa >= 6000) {  
+      if (areaInHa >= 6000) {
         var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
         //document.getElementById('message').innerHTML = message; //.value
         alert(message);
         drawnItems.clearLayers();
         turfLayer.clearLayers();
-      } 
+      }
     } else if (type === 'circle') {
-      
+
       var area = 0;
       var radius = layerShp.getRadius();
       area = (Math.PI) * (radius * radius);
@@ -264,7 +264,7 @@ $(document).ready(function () {
         alert(message);
         drawnItems.clearLayers();
         turfLayer.clearLayers();
-      } 
+      }
     }
   });
 
@@ -344,7 +344,6 @@ $(document).ready(function () {
         })
       }
     });
-    //console.log('mySeries: ', mySeries);
     return(mySeries)
   }
 
@@ -403,14 +402,14 @@ $(document).ready(function () {
         json: items,
         keys: {
           x: 'Index',
-          value: ['ymin_sd', 'ymax_sd', 'mean'] //, 'quantile_25', 'quantile_75'] 
+          value: ['ymin_sd', 'ymax_sd', 'mean'] //, 'quantile_25', 'quantile_75']
         },
         colors: {
-          ymin_sd: '#699402', //'#33cc99', 
+          ymin_sd: '#699402', //'#33cc99',
           ymax_sd: '#0946B2', //'#33cc33',
           mean: '#C92918',  //'#0066ff',
           //quantile_25: '#ff3300',
-          //quantile_75: '#cc0000' 
+          //quantile_75: '#cc0000'
         },
       },
       axis: {
@@ -457,8 +456,8 @@ $(document).ready(function () {
 
   //----- functions to capture a single point
   function timeSeriesRaw() {
-    //mySession_point = null; 
-    
+    //mySession_point = null;
+
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
     var coverage_selected = $("#coverages option:selected").val();
@@ -529,7 +528,7 @@ $(document).ready(function () {
     console.log('sg-scale: ', sg_scale_selected);
 
     //disable the button to prevent multiple clicks
-    $("#submitbuttonfilter").attr("disabled", "disabled"); 
+    $("#submitbuttonfilter").attr("disabled", "disabled");
 
     var req = ocpu.call("TSfilter", { //rpc
       ts_data: mySession_point,
@@ -560,7 +559,7 @@ $(document).ready(function () {
     });
   }
 
- 
+
   function timeSeriesShp() {
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
@@ -579,7 +578,7 @@ $(document).ready(function () {
       } else {
 
     // console.log('shp3: ', jsonCoords);
-    
+
       var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
         name_service: service_selected,
         coverage: coverage_selected,
@@ -622,17 +621,16 @@ $(document).ready(function () {
     $('#filter-whit').toggle(this.value !== 'polygon');
     $('#filter-sg').toggle(this.value !== 'polygon');
     $('#submitbuttonfilter').toggle(this.value !== 'polygon');
-                       
-    if ($('#get-start').is(':checked')) {
 
-      map.off('click', addMarker);
-      drawnItems.clearLayers();
-      turfLayer.clearLayers();
-      drawControlFull.removeFrom(map);
+  //  if ($('#get-start').is(':checked')) {
+  //    map.off('click', addMarker);
+  //    drawnItems.clearLayers();
+  //    turfLayer.clearLayers();
+  //    drawControlFull.removeFrom(map);
+  //  }
+  //  else
+    if ($('#get-point').is(':checked')) {
 
-    }
-    else if ($('#get-point').is(':checked')) {   
-    
       map.on('click', addMarker);
       drawnItems.clearLayers();
       turfLayer.clearLayers();
@@ -642,11 +640,11 @@ $(document).ready(function () {
       $("#submitbutton").unbind('click').click( function (e) {
         e.preventDefault();
         timeSeriesRaw();
-        //$(this).off('click');  
+        //$(this).off('click');
       });
-    } 
-    else if ($('#get-polygon').is(':checked')) { 
-      
+    }
+    else if ($('#get-polygon').is(':checked')) {
+
       map.off("click", addMarker)
       map.removeLayer(newMarker);
       map.addControl(drawControlFull);
@@ -654,7 +652,7 @@ $(document).ready(function () {
       $("#submitbutton").unbind('click').click( function (e) {
         e.preventDefault();
         timeSeriesShp();
-        //$(this).off('click');  
+        //$(this).off('click');
       });
     }
   });
