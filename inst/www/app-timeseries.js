@@ -454,6 +454,22 @@ $(document).ready(function () {
     //   fillArea();
   }
 
+  var table = $('#tableSample').DataTable();
+  $('#tableSample').on( 'click', 'tr', function () {
+      if ( $(this).hasClass('selected') ) {
+          $(this).removeClass('selected');
+      }
+      else {
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+      }
+  } );
+
+  $('#deleteRow').click( function () {
+      table.row('.selected').remove().draw( false );
+  } );
+  var nrow = 1;
+  
   //----- functions to capture a single point
   function timeSeriesRaw() {
     //mySession_point = null;
@@ -495,14 +511,20 @@ $(document).ready(function () {
 
           // add row in table only if success plot time series
           $(function () {
-            nrow += 1;
             var start_date1 = $("#from").val();
             var end_date1 = $("#to").val();
-            var newRow = document.getElementById('tableSample').insertRow();
-            var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
-            //value='Delete'
-            newRow.innerHTML = dataService;
-          });
+            //var newRow = document.getElementById('tableSample').insertRow();
+            table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label"]).draw();
+            //, '<button type="button" class="w3-large"><i class="fa fa-trash" aria-hidden="true"></i></button></td>'
+            // nrow += 1;
+            // var start_date1 = $("#from").val();
+            // var end_date1 = $("#to").val();
+            // var newRow = document.getElementById('tableSample').insertRow();
+            // var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
+            // //value='Delete'
+            // newRow.innerHTML = dataService;
+            nrow += 1;
+          }); 
         });
     }).always(function () { //after request complete, re-enable the button
       $("#submitbutton").removeAttr("disabled");

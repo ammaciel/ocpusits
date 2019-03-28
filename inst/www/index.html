@@ -83,7 +83,10 @@
 <!-- turf.js -->
 <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
 
+<!-- DataTable -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <!-- FIM -->
 
 
@@ -277,8 +280,12 @@
 
       <!-- place holder for table -->
       <div id="title-chart" class="all-charts-title boxtitlepanel"> Points </div>
+      <div id="buttonDelete">
+          <button type="button" id="deleteRow" class="w3-large, btn btn-outline-success"><i class="fa fa-trash" aria-hidden="true"></i> Delete Rows </button>
+        </div>
       <div id="tabService">
         <table id="tableSample" class="tableSample">
+            <thead>  
           <tr>
             <th>id</th>
             <th>longitude</th>
@@ -286,8 +293,9 @@
             <th>start_date</th>
             <th>end_date</th>
             <th>label</th>
-            <th></th>
+            <!-- <th></th> -->
           </tr>
+        </thead>
         </table>
       </div>
       <br/>
@@ -296,7 +304,7 @@
     </div>
         </div>
         </div>
-        </div>
+      </div>
 
     <div class="container-fluid">
       <div class="row">
