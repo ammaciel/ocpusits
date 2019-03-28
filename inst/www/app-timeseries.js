@@ -622,13 +622,6 @@ $(document).ready(function () {
     $('#filter-sg').toggle(this.value !== 'polygon');
     $('#submitbuttonfilter').toggle(this.value !== 'polygon');
 
-  //  if ($('#get-start').is(':checked')) {
-  //    map.off('click', addMarker);
-  //    drawnItems.clearLayers();
-  //    turfLayer.clearLayers();
-  //    drawControlFull.removeFrom(map);
-  //  }
-  //  else
     if ($('#get-point').is(':checked')) {
 
       map.on('click', addMarker);
@@ -750,3 +743,10 @@ $(document).ready(function () {
   }
 });
 
+
+$(function() {
+  $('a[name=about]').on('click', function(e){
+      e.preventDefault();
+      $('#modal').load(this.href).dialog({ modal : true });
+});
+});

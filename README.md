@@ -29,3 +29,7 @@ Simple OpenCPU Application. To install in R:
 
     # Score remotely
     curl -v localhost:5656/ocpu/user/inpe/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+
+    # Or open a Web application 
+    http://ammaciel.ocpu.io/ocpusits/www
+    
