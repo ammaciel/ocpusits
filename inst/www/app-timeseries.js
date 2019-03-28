@@ -613,8 +613,8 @@ $(document).ready(function () {
     $('#lat').toggle(this.value !== 'polygon');
     $('#long').toggle(this.value !== 'polygon');
     $('#showLatLong').toggle(this.value !== 'polygon');
-    $('#band_shp').toggle(this.value !== 'point');
     $('#band').toggle(this.value !== 'polygon');
+    $('#band_shp').toggle(this.value !== 'point');
     $('#title-chart-filter').toggle(this.value !== 'polygon');
     $('#filter').toggle(this.value !== 'polygon');
     $('#filter-group').toggle(this.value !== 'polygon');
@@ -627,7 +627,8 @@ $(document).ready(function () {
       map.on('click', addMarker);
       drawnItems.clearLayers();
       turfLayer.clearLayers();
-      drawControlFull.removeFrom(map);
+      map.removeControl(drawControlFull);
+      //drawControlFull.removeFrom(map);
 
       // https://stackoverflow.com/questions/9240854/jquery-function-executed-more-than-once
       $("#submitbutton").unbind('click').click( function (e) {
