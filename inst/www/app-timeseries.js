@@ -628,8 +628,7 @@ $(document).ready(function () {
       drawnItems.clearLayers();
       turfLayer.clearLayers();
       map.removeControl(drawControlFull);
-      //drawControlFull.removeFrom(map);
-
+      
       // https://stackoverflow.com/questions/9240854/jquery-function-executed-more-than-once
       $("#submitbutton").unbind('click').click( function (e) {
         e.preventDefault();
