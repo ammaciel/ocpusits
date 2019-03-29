@@ -454,6 +454,7 @@ $(document).ready(function () {
     //   fillArea();
   }
 
+  //----- functions to table, remove and edit row
   var table = $('#tableSample').DataTable();
   $('#tableSample').on( 'click', 'tr', function () {
       if ( $(this).hasClass('selected') ) {
@@ -468,6 +469,7 @@ $(document).ready(function () {
   $('#deleteRow').click( function () {
       table.row('.selected').remove().draw( false );
   } );
+  
   var nrow = 1;
   
   //----- functions to capture a single point
@@ -514,7 +516,7 @@ $(document).ready(function () {
             var start_date1 = $("#from").val();
             var end_date1 = $("#to").val();
             //var newRow = document.getElementById('tableSample').insertRow();
-            table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label"]).draw();
+            table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label" ]).draw();
             //, '<button type="button" class="w3-large"><i class="fa fa-trash" aria-hidden="true"></i></button></td>'
             // nrow += 1;
             // var start_date1 = $("#from").val();
@@ -530,7 +532,7 @@ $(document).ready(function () {
       $("#submitbutton").removeAttr("disabled");
       $("#submitbuttonfilter").removeAttr("disabled");
     }).fail(function () { //if R returns an error, alert the error message
-      alert("Failed to plot time series!\nDefine service, coverage and LatLong input!");
+      alert("Failed to plot time series!\nDefine service, coverage and LatLong input!\nOr timeout with server!");
       $("#submitbutton").removeAttr("disabled");
     });
     }
@@ -581,7 +583,6 @@ $(document).ready(function () {
     });
   }
 
-
   function timeSeriesShp() {
     var service_selected = $("#services option:selected").val();
     console.log('service: ', service_selected);
@@ -617,6 +618,14 @@ $(document).ready(function () {
           session.getObject(function (data) {
           // console.log('DATA: ', data);
           plotChartShp(data);
+          console.log('Coordinates shp: ', data);
+
+          // $(function () {
+          //   var start_date1 = $("#from").val();
+          //   var end_date1 = $("#to").val();
+          //   table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label"]).draw();
+          //   nrow += 1;
+          // }); 
 
         });
       }).always(function () { //after request complete, re-enable the button

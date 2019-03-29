@@ -84,9 +84,9 @@
 <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
 
 <!-- DataTable -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 <!-- FIM -->
 
 
@@ -280,9 +280,6 @@
 
       <!-- place holder for table -->
       <div id="title-chart" class="all-charts-title boxtitlepanel"> Points </div>
-      <div id="buttonDelete">
-          <button type="button" id="deleteRow" class="w3-large, btn btn-outline-success"><i class="fa fa-trash" aria-hidden="true"></i> Delete Rows </button>
-        </div>
       <div id="tabService">
         <table id="tableSample" class="tableSample">
             <thead>  
@@ -299,12 +296,20 @@
         </table>
       </div>
       <br/>
-      <div id="buttonSave">
-        <button type="button" id="saveCSV" class="w3-large, btn btn-outline-success"><i class="fa fa-save" aria-hidden="true"></i> CSV </button>
+      <div class="buttons-table">
+          <div class="action_btn"> 
+            <!-- <div id="buttonSave"> -->
+              <button type="button" id="saveCSV" class="w3-large, btn btn-outline-success"><i class="fa fa-save" aria-hidden="true"></i> CSV </button>
+            <!-- </div> -->
+            <!-- <div id="buttonDelete"> -->
+              <button type="button" id="deleteRow" class="w3-large, btn btn-outline-success"><i class="fa fa-trash" aria-hidden="true"></i> Delete Rows </button>
+            <!-- </div> -->
+        </div>
     </div>
-        </div>
-        </div>
-      </div>
+
+    </div>
+    </div>
+  </div>
 
     <div class="container-fluid">
       <div class="row">
