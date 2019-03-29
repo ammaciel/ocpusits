@@ -515,8 +515,8 @@ $(document).ready(function () {
           $(function () {
             var start_date1 = $("#from").val();
             var end_date1 = $("#to").val();
-            //var newRow = document.getElementById('tableSample').insertRow();
             table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label" ]).draw();
+            nrow += 1;
             //, '<button type="button" class="w3-large"><i class="fa fa-trash" aria-hidden="true"></i></button></td>'
             // nrow += 1;
             // var start_date1 = $("#from").val();
@@ -525,7 +525,6 @@ $(document).ready(function () {
             // var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
             // //value='Delete'
             // newRow.innerHTML = dataService;
-            nrow += 1;
           }); 
         });
     }).always(function () { //after request complete, re-enable the button
