@@ -469,7 +469,6 @@ $(document).ready(function () {
   $('#deleteRow').click( function () {
       table.row('.selected').remove().draw( false );
   } );
-  
   var nrow = 1;
   
   //----- functions to capture a single point
