@@ -212,7 +212,7 @@ $(document).ready(function () {
         allFeatures[i] = turf.centroid(polygon);
         //turfLayer.addData(allFeatures)
     }}
-    console.log('all features: ', allFeatures);
+   // console.log('all features: ', allFeatures);
 
     //jsonCoords = JSON.parse(JSON.stringify(allFeatures));
     jsonCoords = JSON.stringify(allFeatures);
@@ -470,7 +470,7 @@ $(document).ready(function () {
       table.row('.selected').remove().draw( false );
   } );
   var nrow = 1;
-  
+
   //----- functions to capture a single point
   function timeSeriesRaw() {
     //mySession_point = null;
@@ -524,7 +524,7 @@ $(document).ready(function () {
             // var dataService = "<td>" + nrow + "</td><td>" + long1 + "</td><td>" + lat1 + "</td><td contenteditable='true'>" + start_date1 + "</td><td contenteditable='true'>" + end_date1 + "</td><td contenteditable='true'>" + "No label" + "</td><td><button type='button' class='w3-large'><i class='fa fa-trash'aria-hidden='true'></i></button></td>";
             // //value='Delete'
             // newRow.innerHTML = dataService;
-          }); 
+          });
         });
     }).always(function () { //after request complete, re-enable the button
       $("#submitbutton").removeAttr("disabled");
@@ -598,7 +598,7 @@ $(document).ready(function () {
         $("#submitbutton").removeAttr("disabled");
       } else {
 
-    // console.log('shp3: ', jsonCoords);
+     console.log('json coordinates from shapefile: ', jsonCoords);
 
       var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
         name_service: service_selected,
@@ -623,7 +623,7 @@ $(document).ready(function () {
           //   var end_date1 = $("#to").val();
           //   table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label"]).draw();
           //   nrow += 1;
-          // }); 
+          // });
 
         });
       }).always(function () { //after request complete, re-enable the button
@@ -657,7 +657,7 @@ $(document).ready(function () {
       drawnItems.clearLayers();
       turfLayer.clearLayers();
       map.removeControl(drawControlFull);
-      
+
       // https://stackoverflow.com/questions/9240854/jquery-function-executed-more-than-once
       $("#submitbutton").unbind('click').click( function (e) {
         e.preventDefault();
