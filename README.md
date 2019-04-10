@@ -3,6 +3,19 @@ OpenCPU App: ocpusits
 
 Simple OpenCPU Application. To install in R:
 
+The overview of the OpenCPU application architecture is here:
+
+<table width="700" border="0">
+<tr>
+<td align="center" valign="center">
+<img src="inst/extdata/figures/opencpu-design.png" alt="Fig. 1. Package design using OpenCPU" />
+<p class="caption">
+Fig. 1. Package design using OpenCPU
+</p>
+</td>
+</tr>
+</table>
+
 ## Prerequisites
 
 - Running [opencpu](https://www.opencpu.org/) server.
