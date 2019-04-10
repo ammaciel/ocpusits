@@ -16,7 +16,7 @@ Fig. 1. Application design using OpenCPU
 </tr>
 </table>
 
-With a webhook, every push to Github will be mirrored onto the OpenCPU server. Access: http://ammaciel.ocpu.io/ocpusits/www
+With a webhook, every push to Github will be mirrored onto the OpenCPU server. You can access the app on http://ammaciel.ocpu.io/ocpusits/www
 
 
 ## Prerequisites to install in R:
@@ -41,18 +41,22 @@ With a webhook, every push to Github will be mirrored onto the OpenCPU server. A
     
     docker run -d -p 8004:8004 ammaciel/ocpusits
 
+    # And then, access web page with application:
+    
     http://localhost:8004/ocpu/library/ocpusits/www/
 
     # Lookup the container ID
     docker ps
 
-    # Drop a shell
-    docker exec -i -t container_id /bin/bash
+    # Run in a shell
+    docker exec -i -t container_id_of_image_ammaciel /bin/bash
 
-    # Score in localhost
-    curl -v localhost:5656/ocpu/user/inpe/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+    # Sends the specified data in a POST request to the localhost (docker image)
+    curl -v localhost:8004/ocpu/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+
+    ## In a terminal 
     
-    # Or score remotely from OpenCPU server
+    # Or sends the specified data in a POST request to the OpenCPU server
     curl -v http://ammaciel.ocpu.io/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 
