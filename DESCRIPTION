@@ -1,10 +1,10 @@
 Package: ocpusits
 Type: Package
-Title: OpenCPU with Time Series
+Title: OpenCPU Satellite Image Time Series
 Version: 0.1.0
 Author: Adeline Maciel [aut, cre]
 Maintainer: Adeline Maciel <adelsud6@gmail.com>
-Description: OpenCPU Time Series using opencpu (ocpusits) for the integration between opencpu and R to Web applications. With this webapp is possible to capture points of time series from a web map leaflet.
+Description: OpenCPU Satellite Image Time Series (ocpusits) using opencpu for the integration between opencpu and R to Web applications. With this webapp is possible to capture points of time series from a web map leaflet.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -216,7 +216,7 @@ $(document).ready(function () {
 
     //jsonCoords = JSON.parse(JSON.stringify(allFeatures));
     jsonCoords = JSON.stringify(allFeatures);
-    //console.log('json: ', jsonCoords);
+    console.log('json coordinates from shapefile: ', jsonCoords);
   }
 
 
@@ -411,6 +411,12 @@ $(document).ready(function () {
           //quantile_25: '#ff3300',
           //quantile_75: '#cc0000'
         },
+        //labels: true,
+        names: {
+          ymin_sd: 'standard deviation inferior',
+          ymax_sd: 'standard deviation superior',
+          mean: 'mean'
+        },
       },
       axis: {
         x: {
@@ -597,8 +603,6 @@ $(document).ready(function () {
         alert('Draw polygon!');
         $("#submitbutton").removeAttr("disabled");
       } else {
-
-     console.log('json coordinates from shapefile: ', jsonCoords);
 
       var req = ocpu.call("TSoperationSHP", { // ocpu.rpc
         name_service: service_selected,

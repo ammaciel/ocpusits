@@ -69,7 +69,7 @@
 /* #tableSample tr:nth-child(even){background-color: #f2f2f2} */
 
 #tableSample th {
-    background-color: #017a6b; /*#4CAF50;*/
+    background-color: #275dac; /*#4CAF50;*/
     color: white;
 }
 
@@ -78,8 +78,10 @@ path.area {
   fill: lightsteelblue;
 }
 
+/* site loader generate http://loadergenerator.com/ */
+
 #submitbutton:disabled {
-    background-image: url(../www/loading2.gif);
+    background-image: url(../www/loading3.gif);
     background-repeat:no-repeat;
     width: 223px;
     height: 26px;

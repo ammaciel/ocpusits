@@ -81,11 +81,6 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
   }
 }
 
-
-#ts_data <- TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", shp_file = json_file)
-
-#TSoperationSHP(name_service = "SATVEG", coverage = "terra", shp_file = json_file)
-
 #' @title TS Summary
 #' @name .summary_ts
 #' @aliases .summary_ts
@@ -125,6 +120,13 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 
 }
 
-
+## Example
+# json_file <- '[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.23524549871459]}}]'
+#
+# ts_data <- TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", shp_file = json_file)
+# ts_data
+#
+# TSoperationSHP(name_service = "SATVEG", coverage = "terra", shp_file = json_file)
+#
 
 
