@@ -463,17 +463,19 @@ $(document).ready(function () {
   //----- functions to table, remove and edit row
   var table = $('#tableSample').DataTable();
   $('#tableSample').on( 'click', 'tr', function () {
-      if ( $(this).hasClass('selected') ) {
-          $(this).removeClass('selected');
-      }
-      else {
-          table.$('tr.selected').removeClass('selected');
-          $(this).addClass('selected');
-      }
+      // if ( $(this).hasClass('selected') ) {
+      //     $(this).removeClass('selected');
+      // }
+      // else {
+      //     table.$('tr.selected').removeClass('selected');
+      //     $(this).addClass('selected');
+      // }
+      $(this).toggleClass('selected');
   } );
 
   $('#deleteRow').click( function () {
-      table.row('.selected').remove().draw( false );
+      // table.row('.selected').remove().draw( false );
+      table.rows('.selected').remove().draw( false );
   } );
 
   $('#clearTable').click( function () {
@@ -635,7 +637,7 @@ $(document).ready(function () {
             // var lat = $(data[0]).map(function() {
             //   return this.latitude;
             // }).get()
-            obj = JSON.parse(jsonCoords);
+            var obj = JSON.parse(jsonCoords);
             var lng = [];
             var lat = [];
             for (var i = 0; i < Object.keys(obj).length; i++) {
