@@ -475,6 +475,10 @@ $(document).ready(function () {
   $('#deleteRow').click( function () {
       table.row('.selected').remove().draw( false );
   } );
+
+  $('#clearTable').click( function () {
+    table.clear().draw();
+  } );
   var nrow = 1;
 
   //----- functions to capture a single point
@@ -614,21 +618,37 @@ $(document).ready(function () {
         shp_file: jsonCoords,
       }, function (session) {
           var mySession_shp = session;
-
           //console.log('mySession_shp: ', session);
 
           session.getObject(function (data) {
-          // console.log('DATA: ', data);
-          plotChartShp(data);
-          console.log('Coordinates shp: ', data);
+          // console.log('DATA: ', data[0]);
+          plotChartShp(data[1]);
+          // console.log('Coordinates shp: ', data);
 
-          // $(function () {
-          //   var start_date1 = $("#from").val();
-          //   var end_date1 = $("#to").val();
-          //   table.row.add([ nrow , long1, lat1, start_date1, end_date1, "No label"]).draw();
-          //   nrow += 1;
-          // });
-
+          // add row in table only if success plot time series
+          $(function () {
+            var start_date1 = $("#from").val();
+            var end_date1 = $("#to").val();
+            // var lng = $(data[0]).map(function() {
+            //   return this.longitude;
+            // }).get()
+            // var lat = $(data[0]).map(function() {
+            //   return this.latitude;
+            // }).get()
+            obj = JSON.parse(jsonCoords);
+            var lng = [];
+            var lat = [];
+            for (var i = 0; i < Object.keys(obj).length; i++) {
+              lng[i] = obj[i].geometry.coordinates[0];
+              lat[i] = obj[i].geometry.coordinates[1];
+            }
+            // add each line in a datatable
+            for (var i = 0; i < lng.length; i++) {
+              table.row.add([ nrow , lng[i], lat[i], start_date1, end_date1, "No label" ]).draw();
+              nrow += 1;
+            }
+            
+          });
         });
       }).always(function () { //after request complete, re-enable the button
         $("#submitbutton").removeAttr("disabled");

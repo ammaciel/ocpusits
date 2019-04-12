@@ -27,10 +27,9 @@
 
 TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
 
-  # #input validation
+  #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
-  #shp_file <- shp_file
   json_data <- jsonlite::fromJSON(shp_file)
 
   myPolygon <- tibble::tibble(longitude = numeric(),
@@ -42,10 +41,6 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
   if(name_service == "WTSS-INPE" & coverage == "MOD13Q1"){
 
     coverage_wtss.tb <- sits::sits_coverage(service = name_service, name = coverage)
-    # retrieve the time series associated with the point from the WTSS server
-    # point.tb <- sits::sits_get_data(coverage = coverage_wtss.tb, bands = c(bands),
-    #                                 start_date = start_date, end_date = end_date,
-    #                                 file = shp_file)
     points = list()
     for (i in 1:nrow(myPolygon)){
       points[[i]] <- sits::sits_get_data(coverage = coverage_wtss.tb,
@@ -55,17 +50,13 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
                                       end_date = end_date)
     }
     point.tb <- do.call(rbind, points)
-    #return(point.tb)
     data.ts <- .summary_ts(point.tb)
-    return(data.ts)
+    result <- list(point.tb[,1:5], data.ts)
+    return(result)
   }
 
   if(name_service == "SATVEG" & (coverage == "terra" | coverage == "aqua" | coverage == "comb")){
     coverage_satveg.tb <- sits::sits_coverage(service = name_service, name = coverage)
-    # retrieve the time series associated with the point from the WTSS server
-    # point.tb <- sits::sits_get_data(coverage = coverage_satveg.tb,
-    #                                 prefilter = as.character(pre_filter),
-    #                                 file = shp_file)
     points = list()
     for (i in 1:nrow(myPolygon)){
       points[[i]] <- sits::sits_get_data(coverage = coverage_satveg.tb,
@@ -74,9 +65,9 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
                                          prefilter = as.character(pre_filter))
     }
     point.tb <- do.call(rbind, points)
-    #return(point.tb)
     data.ts <- .summary_ts(point.tb)
-    return(data.ts)
+    result <- list(point.tb[,1:5], data.ts)
+    return(result)
 
   }
 }
@@ -121,7 +112,7 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 }
 
 ## Example
-# json_file <- '[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28919963826381,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28688992655822,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.284580214852625,-13.23524549871459]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.239742100533213]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.237493799623902]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28227050314703,-13.23524549871459]}}]'
+# json_file <- '[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.2377769601908]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.2377769601908]}}]'
 #
 # ts_data <- TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", shp_file = json_file)
 # ts_data

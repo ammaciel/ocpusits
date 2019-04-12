@@ -6,6 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>ocpusits</title>
 
+<!-- problem favicon -->
+<link rel="icon" href="data:;base64,iVBORw0KGgo="> 
+
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- Popper.JS -->
@@ -157,7 +160,7 @@
             <select class="form-control" multiple id="band" required>
               <option value="">-- Bands --</option>
             </select>
-            <select class="form-control" id="band_shp" required>
+            <select class="form-control" id="band_shp" required style="display:none">
               <option value="">-- Bands --</option>
             </select>
           </div>
@@ -267,6 +270,7 @@
             <!-- <div id="buttonDelete"> -->
               <button type="button" id="deleteRow" class="w3-large, btn btn-outline-primary"><i class="fa fa-trash" aria-hidden="true"></i> Delete Rows </button>
             <!-- </div> -->
+            <button type="button" id="clearTable" class="w3-large, btn btn-outline-primary"><i class="fa fa-table" aria-hidden="true"></i> Clear Table </button>
         </div>
     </div>
 
