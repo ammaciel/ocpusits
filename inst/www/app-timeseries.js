@@ -153,7 +153,8 @@ $(document).ready(function () {
     },
      edit: {
        featureGroup: drawnItems,
-       remove: false
+       remove: false,
+       edit: false
      }
   });
  //  map.addControl(drawControlFull);
