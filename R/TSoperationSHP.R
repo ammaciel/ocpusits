@@ -8,7 +8,7 @@
 #' @usage TSoperationSHP(name_service = c("WTSS-INPE", "SATVEG"),
 #' coverage = c("MOD13Q1", "terra", "aqua", "comb"),
 #' bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
-#' start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL)
+#' start_date = NULL, end_date = NULL, pre_filter = "1", geojson_points = NULL)
 #'
 #' @param name_service  information of service, like WTSS-INPE or SATVEG.
 #' @param coverage      name of coverage from service.
@@ -16,7 +16,7 @@
 #' @param start_date    first date of interval
 #' @param end_date      last date of the interval
 #' @param pre_filter    a string ("0" none, "1" no data correction, "2" cloud correction, "3" no data and cloud correction). Information of sits package.
-#' @param shp_file      receive a shapefile (polygon) data
+#' @param geojson_points   receive a GeoJSON with all points from polygon
 #' @return Data set with time series data
 #' @export
 #'
@@ -25,12 +25,12 @@
 #' @importFrom tibble tibble
 #'
 
-TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL){
+TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, pre_filter = "1", geojson_points = NULL){
 
   #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
-  json_data <- jsonlite::fromJSON(shp_file)
+  json_data <- jsonlite::fromJSON(geojson_points)
 
   myPolygon <- tibble::tibble(longitude = numeric(),
                               latitude = numeric())
@@ -114,10 +114,10 @@ TSoperationSHP <- function(name_service = c("WTSS-INPE", "SATVEG"), coverage = c
 ## Example
 # json_file <- '[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.2377769601908]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.2377769601908]}}]'
 #
-# ts_data <- TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", shp_file = json_file)
+# ts_data <- TSoperationSHP(name_service = "WTSS-INPE", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-01", end_date = "2017-08-21", geojson_points = json_file)
 # ts_data
 #
-# TSoperationSHP(name_service = "SATVEG", coverage = "terra", shp_file = json_file)
+# TSoperationSHP(name_service = "SATVEG", coverage = "terra", geojson_points = json_file)
 #
 
 

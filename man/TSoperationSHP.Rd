@@ -7,7 +7,7 @@
 TSoperationSHP(name_service = c("WTSS-INPE", "SATVEG"),
 coverage = c("MOD13Q1", "terra", "aqua", "comb"),
 bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
-start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL)
+start_date = NULL, end_date = NULL, pre_filter = "1", geojson_points = NULL)
 }
 \arguments{
 \item{name_service}{information of service, like WTSS-INPE or SATVEG.}
@@ -22,7 +22,7 @@ start_date = NULL, end_date = NULL, pre_filter = "1", shp_file = NULL)
 
 \item{pre_filter}{a string ("0" none, "1" no data correction, "2" cloud correction, "3" no data and cloud correction). Information of sits package.}
 
-\item{shp_file}{receive a shapefile (polygon) data}
+\item{geojson_points}{receive a GeoJSON with all points from polygon}
 }
 \value{
 Data set with time series data

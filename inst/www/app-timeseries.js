@@ -217,7 +217,8 @@ $(document).ready(function () {
 
     //jsonCoords = JSON.parse(JSON.stringify(allFeatures));
     jsonCoords = JSON.stringify(allFeatures);
-    console.log('json coordinates from shapefile: ', jsonCoords);
+    console.log('GeoJSON coordinates from polygon: ', jsonCoords);
+    // test at https://utahemre.github.io/geojsontest.html
   }
 
 
@@ -618,7 +619,7 @@ $(document).ready(function () {
         start_date: $("#from").val(),
         end_date: $("#to").val(),
         pre_filter: pre_filter_selected,
-        shp_file: jsonCoords,
+        geojson_points: jsonCoords,
       }, function (session) {
           var mySession_shp = session;
           //console.log('mySession_shp: ', session);
@@ -650,7 +651,7 @@ $(document).ready(function () {
               table.row.add([ nrow , lng[i], lat[i], start_date1, end_date1, "No label" ]).draw();
               nrow += 1;
             }
-            
+
           });
         });
       }).always(function () { //after request complete, re-enable the button
