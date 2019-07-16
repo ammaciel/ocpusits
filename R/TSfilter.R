@@ -53,8 +53,11 @@ TSfilter <- function(ts_data = NULL, type_filter = c("No-filter", "Whittaker", "
 }
 
 # test <- TSoperation(name_service = "WTSS-INPE", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
+# plot.ts(test$time_series[[1]]$evi, type="l", col="black" )
 
-# test.fi <- TSfilter(ts_data = test, type_filter = "Savitsky-Golay") #Whittaker
+# test.fi <- TSfilter(ts_data = test, type_filter = "Savitsky-Golay")
+# lines(test.fi$time_series[[1]]$evi.sg, col="red")
+
 
 
 
