@@ -148,8 +148,8 @@
           <div class="form-group">
             <select class="form-control" id="services" required>
               <option value="item0">-- Service --</option>
-              <option value="WTSS-INPE">WTSS-INPE</option>
-              <option value="SATVEG">SATVEG-EMBRAPA</option>
+              <option value="WTSS">WTSS</option>
+              <option value="SATVEG">SATVEG</option>
             </select>
           </div>
           <div class="form-group">
@@ -162,7 +162,7 @@
           </div>
           <div class="form-group">
             <input type="number" class="form-control" id="long" placeholder="Longitude" > <!-- value="-56.245043"-->
-            <button type="button" id="showLatLong" class="btn btn-outline-primary"> Show points! </button>
+            <button type="button" id="showLatLong" class="btn btn-outline-primary"> Zoom point! </button>
           </div>
           <div class="form-group">
             <select class="form-control" multiple id="band" required>
@@ -173,19 +173,13 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="pre_filter">Pre filter SATVEG: </label>
-            <select class="form-control" id="pre_filter" required>
-              <option value="">-- Pre-filter SATVEG --</option>
-            </select>
+            <label for="from">Start Date: </label>
+            <input type="date" class="form-control" id="from" value="2008-05-04">
           </div>
-            <div class="form-group">
-              <label for="from">Start Date: </label>
-              <input type="date" class="form-control" id="from" value="2008-05-04">
-            </div>
-            <div class="form-group">
-              <label for="to">End Date: </label>
-              <input type="date" class="form-control" id="to" value="2016-04-13">
-            </div>
+          <div class="form-group">
+            <label for="to">End Date: </label>
+            <input type="date" class="form-control" id="to" value="2016-04-13">
+          </div>
             <!-- <button type="button" id="submitbutton"> Submit to server! </button> -->
            <button type="button" id="submitbutton" class="btn btn-primary"> Submit to server! </button>
 
@@ -209,12 +203,12 @@
               <div class="form-group" id="filter-whit">
                 <label for="parameter-Whittaker">Whittaker parameters: </label>
                 <label for="wh-lambda"> <input type="number" class="form-control" id="wh-lambda" required placeholder="lambda" step="0.01" value="1.0" disabled> lambda </label>
-                <label for="wh-differences"> <input type="number" class="form-control" id="wh-differences" required placeholder="differences" value="3" disabled> differences </label>
               </div>
               <div class="form-group" id="filter-sg">
                 <label for="parameter-Savitsky-Golay">Savitsky-Golay parameters: </label>
                 <label for="sg-order"> <input type="number" class="form-control" id="sg-order" required placeholder="order" value="3" disabled> order </label>
-                <label for="sg-scale"> <input type="number" class="form-control" id="sg-scale" required placeholder="scale" value="1" disabled> scale </label>
+                <label for="sg-length"> <input type="number" class="form-control" id="sg-length" required placeholder="length" value="5" disabled> length </label>
+                <label for="sg-scaling"> <input type="number" class="form-control" id="sg-scaling" required placeholder="scaling" value="1" disabled> sclaing </label>
               </div>
               <button type="button" id="submitbuttonfilter" class="btn btn-primary" disabled> Apply filter! </button>
       </div>

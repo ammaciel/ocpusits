@@ -35,7 +35,7 @@ With a webhook, every push to Github will be mirrored onto the OpenCPU server. Y
     library(devtools)
     install_github("ammaciel/ocpusits")
 
-    ocpusits::TSoperation(name_service = "WTSS-INPE", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
+    ocpusits::TSoperation(name_service = "WTSS", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
     
     # In a browser:
     http://localhost:5656/ocpu/library/ocpusits/www/

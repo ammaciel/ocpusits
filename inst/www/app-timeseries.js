@@ -117,19 +117,20 @@ $(document).ready(function () {
       polyline: false, //{
         //metric: true
       //},
-      polygon: {
-        metric: true,
-        allowIntersection: false,
-        showArea: true,
-        drawError: {
-          color: '#b00b00',
-          timeout: 1000
-        },
-        shapeOptions: {
-          color: '#bada55',
-          fill: false,
-        }
-      },
+      polygon: false,
+      //  polygon: {
+      //  metric: true,
+      //  allowIntersection: false,
+      //  showArea: true,
+      //  drawError: {
+      //    color: '#b00b00',
+      //    timeout: 1000
+      //  },
+      //  shapeOptions: {
+      //    color: '#bada55',
+      //    fill: false,
+      //  }
+      //},
       rectangle: {
         metric: true,
         shapeOptions: {
@@ -241,8 +242,8 @@ $(document).ready(function () {
       areaInHa = (area / 10000).toFixed(2)
       console.log('area hectare:', areaInHa);
 
-      if (areaInHa >= 6000) {
-        var message = "Area more than 6000 ha: " + areaInHa  + " ha.";
+      if (areaInHa >= 2000) {
+        var message = "Area more than 2000 ha: " + areaInHa  + " ha.";
         //document.getElementById('message').innerHTML = message; //.value
         alert(message);
         drawnItems.clearLayers();
@@ -260,8 +261,8 @@ $(document).ready(function () {
       //-- internal buffer to get MODIS pixel only within polygon
       getPointsPolygon(layerShp, radius-230);
 
-      if (areaInHa >= 6000) {
-        var message = "Area more than 6000 ha: " + areaInHa + " ha.";
+      if (areaInHa >= 2000) {
+        var message = "Area more than 2000 ha: " + areaInHa + " ha.";
         //document.getElementById('message').innerHTML = message; //.value
         alert(message);
         drawnItems.clearLayers();
@@ -283,18 +284,14 @@ $(document).ready(function () {
   //----- define values of the input
   $("#services").change(function () {
     switch ($(this).val()) {
-      case 'WTSS-INPE':
+      case 'WTSS':
         $("#coverages").html("<option value='MOD13Q1'> MOD13Q1 </option>");
         $("#band").html("<option selected='selected' value='evi'> evi </option><option value='ndvi'> ndvi </option><option value='mir'> mir </option><option value='nir'> nir </option><option value='red'> red </option><option value='blue'> blue </option>");
         $("#band_shp").html("<option selected='selected' value='evi'> evi </option><option value='ndvi'> ndvi </option><option value='mir'> mir </option><option value='nir'> nir </option><option value='red'> red </option><option value='blue'> blue </option>");
-        $("#pre_filter").find("option").each(function () {
-          $(this).attr("disabled", "disabled");
-        });
         break;
       case 'SATVEG':
         $("#coverages").html("<option value='terra'>Terra</option><option value='aqua'>Aqua</option><option value='comb'>Combination</option>");
         //$("#band").html("<option value='evi'> evi </option><option value='ndvi'> ndvi</option>");
-        $("#pre_filter").html("<option value='0'> 0 - none </option><option selected='selected' value='1'> 1 - no data correction </option><option value='2'> 2 - cloud correction </option><option value='3'> 3 - no data and cloud correction </option>");
         $("#band").find("option").each(function (){
           $(this).attr("disabled", "disabled");
         });
@@ -314,21 +311,21 @@ $(document).ready(function () {
     switch ($(this).val()) {
       case 'No-filter':
         $("#wh-lambda").prop("disabled", true);
-        $("#wh-differences").prop("disabled", true);
         $("#sg-order").prop("disabled", true);
-        $("#sg-scale").prop("disabled", true);
+        $("#sg-length").prop("disabled", true);
+        $("#sg-scaling").prop("disabled", true);
         break;
       case 'Whittaker':
         $("#wh-lambda").prop("disabled", false);
-        $("#wh-differences").prop("disabled", false);
         $("#sg-order").prop("disabled", true);
-        $("#sg-scale").prop("disabled", true);
+        $("#sg-length").prop("disabled", true);
+        $("#sg-scaling").prop("disabled", true);
         break;
       case 'Savitsky-Golay':
         $("#wh-lambda").prop("disabled", true);
-        $("#wh-differences").prop("disabled", true);
         $("#sg-order").prop("disabled", false);
-        $("#sg-scale").prop("disabled", false);
+        $("#sg-length").prop("disabled", false);
+        $("#sg-scaling").prop("disabled", false);
         break;
     }
   });
@@ -495,8 +492,6 @@ $(document).ready(function () {
     console.log('coverage: ', coverage_selected);
     var band_selected = $("#band").val();
     console.log('bands: ', band_selected);
-    var pre_filter_selected = $("#pre_filter").val();
-    console.log('pre filter: ', pre_filter_selected);
     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
@@ -513,7 +508,6 @@ $(document).ready(function () {
       bands: band_selected,
       start_date: $("#from").val(),
       end_date: $("#to").val(),
-      pre_filter: pre_filter_selected
     }, function (session) {
         mySession_point = session;
 
@@ -556,12 +550,12 @@ $(document).ready(function () {
     console.log('filter: ', filter_selected);
     var wh_lambda_selected = $("#wh-lambda").val();
     console.log('wh-lambda: ', wh_lambda_selected);
-    var wh_diff_selected = $("#wh-differences").val();
-    console.log('wh-differences: ', wh_diff_selected);
     var sg_order_selected = $("#sg-order").val();
     console.log('sg-order: ', sg_order_selected);
-    var sg_scale_selected = $("#sg-scale").val();
-    console.log('sg-scale: ', sg_scale_selected);
+    var sg_length_selected = $("#sg-length").val();
+    console.log('sg-length: ', sg_length_selected);
+    var sg_scaling_selected = $("#sg-scaling").val();
+    console.log('sg-scaling: ', sg_scaling_selected);
 
     //disable the button to prevent multiple clicks
     $("#submitbuttonfilter").attr("disabled", "disabled");
@@ -570,9 +564,9 @@ $(document).ready(function () {
       ts_data: mySession_point,
       type_filter: filter_selected,
       wh_lambda: wh_lambda_selected,
-      wh_differences: wh_diff_selected,
       sg_order: sg_order_selected,
-      sg_scale: sg_scale_selected,
+      sg_length: sg_length_selected,
+      sg_scaling: sg_scaling_selected,
     }, function (session) {
         //console.log('mySession_point: ', mySession_point);
           session.getObject(function (data) {
@@ -581,7 +575,7 @@ $(document).ready(function () {
           var series = prepareData(myData);
           //console.log('series: ', series);
 
-          var str = JSON.stringify(series).replace(/.whit/g, "_whit"); //convert to JSON string
+          var str = JSON.stringify(series).replace(/.wt/g, "_wt"); //convert to JSON string
           str = str.replace(/.sg/g, "_sg");
           var series2 = JSON.parse(str);    //convert back to array
           console.log('series filter: ', series2);
@@ -602,9 +596,7 @@ $(document).ready(function () {
     console.log('coverage: ', coverage_selected);
     var band_selected = $("#band_shp").val();
     console.log('bands: ', band_selected);
-     var pre_filter_selected = $("#pre_filter").val();
-     console.log('pre filter: ', pre_filter_selected);
-    //disable the button to prevent multiple clicks
+     //disable the button to prevent multiple clicks
     $("#submitbutton").attr("disabled", "disabled");
 
     if (typeof jsonCoords === null) {
@@ -618,7 +610,6 @@ $(document).ready(function () {
         bands: band_selected,
         start_date: $("#from").val(),
         end_date: $("#to").val(),
-        pre_filter: pre_filter_selected,
         geojson_points: jsonCoords,
       }, function (session) {
           var mySession_shp = session;
