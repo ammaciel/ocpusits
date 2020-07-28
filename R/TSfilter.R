@@ -35,7 +35,7 @@ TSfilter <- function(ts_data = NULL, type_filter = c("No-filter", "Whittaker", "
   # "Whittaker filter"
   if(type_filter == "Whittaker"){
 
-    res <- sits::sits_whittaker(data = ts_data, lambda = as.numeric(wh_lambda), bands_suffix = "wf") %>%
+    res <- sits::sits_whittaker(data = ts_data, lambda = as.numeric(wh_lambda), bands_suffix = "wt") %>%
       sits::sits_merge (ts_data)
     return(res)
   }
