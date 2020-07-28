@@ -6,6 +6,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends apt-utils
 
 # install basic apps, one per line for better caching
+RUN apt-get -qy install libprotobuf-dev
 RUN apt-get -qy install libudunits2-dev
 RUN apt-get -qy install libcurl4-openssl-dev
 RUN apt-get -qy install libxml2-dev
