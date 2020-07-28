@@ -4,13 +4,13 @@
 \alias{TSoperation}
 \title{TS Operation}
 \usage{
-TSoperation(name_service = c("WTSS-INPE", "SATVEG"),
+TSoperation(name_service = c("WTSS", "SATVEG"),
 coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL,
 latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
-start_date = NULL, end_date = NULL, pre_filter = "1")
+start_date = NULL, end_date = NULL)
 }
 \arguments{
-\item{name_service}{information of service, like WTSS-INPE or SATVEG.}
+\item{name_service}{information of service, like WTSS or SATVEG.}
 
 \item{coverage}{name of coverage from service.}
 
@@ -23,8 +23,6 @@ start_date = NULL, end_date = NULL, pre_filter = "1")
 \item{start_date}{first date of interval}
 
 \item{end_date}{last date of the interval}
-
-\item{pre_filter}{a string ("0" none, "1" no data correction, "2" cloud correction, "3" no data and cloud correction). Information of sits package.}
 }
 \value{
 Data set with time series data

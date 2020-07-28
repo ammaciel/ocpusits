@@ -6,8 +6,7 @@
 \usage{
 TSfilter(ts_data = NULL,
 type_filter = c("No-filter", "Whittaker", "Savitsky-Golay"),
-wh_lambda = "1.0", wh_differences = "3", sg_order = "3",
-sg_scale = "1")
+wh_lambda = "1.0", sg_order = "3", sg_length = "5", sg_scaling = "1")
 }
 \arguments{
 \item{ts_data}{data set with point via WTSS}
@@ -16,11 +15,11 @@ sg_scale = "1")
 
 \item{wh_lambda}{smoothing factor to be applied (default 1.0). See sits_whittaker in sits package {sits}}
 
-\item{wh_differences}{the order of differences of contiguous elements (default 3). See sits_whittaker in sits package {sits}}
-
 \item{sg_order}{filter order (default 3). See sits_sgolay in sits package {sits}}
 
-\item{sg_scale}{time scaling (default 1). See sits_sgolay in sits package {sits}}
+\item{sg_length}{Filter length (must be odd, default 5). See sits_sgolay in sits package {sits}}
+
+\item{sg_scaling}{time scaling (default 1). See sits_sgolay in sits package {sits}}
 }
 \value{
 Plot time series filtered
