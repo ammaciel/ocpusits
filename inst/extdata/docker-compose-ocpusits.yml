@@ -1,0 +1,20 @@
+version: "2"
+services:
+  app:
+    image: ammaciel/ocpusits
+    container_name: ocpusits_container
+    ports:
+      - "8004:8004"
+    restart: always
+    volumes:
+      - /home/user/Docker-Compose/ocpusits_data:/data
+volumes:
+  ocpusits_data:
+    driver: local
+
+# sudo docker-compose -f /home/user/docker-compose-ocpusits.yml up -d
+
+# sudo docker-compose -f /home/user/docker-compose-ocpusits.yml down
+
+# http://localhost:8004/ocpu/library/ocpusits/www/
+

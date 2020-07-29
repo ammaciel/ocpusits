@@ -65,6 +65,3 @@ With a webhook, every push to Github will be mirrored onto the OpenCPU server. Y
     # Or sends the specified data in a POST request to the OpenCPU server
     curl -v http://ammaciel.ocpu.io/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
-
-  
-    

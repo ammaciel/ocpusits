@@ -1,0 +1,104 @@
+-- Opencpu --
+
+Recommended: Ubuntu 16.04 / 18.04
+-- https://github.com/opencpu/opencpu
+
+----------------
+-- Cloud Server
+----------------
+To install the cloud server on Ubuntu Server:
+
+#requires Ubuntu 16.04 (Xenial) or 18.04 (Bionic)
+sudo add-apt-repository -y ppa:opencpu/opencpu-2.1
+sudo apt-get update 
+sudo apt-get upgrade
+
+#install opencpu server
+sudo apt-get install -y opencpu-server
+# Done! Open http://yourhost/ocpu in your browser
+
+# Optional: installs rstudio in http://yourhost/rstudio
+sudo apt-get install -y rstudio-server 
+
+See the opencpu https://www.opencpu.org/download.html for details how to install on other platforms.
+
+----------------
+-- Local Single-User Server 
+----------------
+To start the single-user development server in R:
+
+Need install the 'protobuf-compiler' in your system
+sudo apt-get install -y libprotobuf-dev
+
+--- Open R in a terminal and execute
+install.packages("unix") 	# to opencpu webpage
+install.packages("signal") 	# to filter sits
+install.packages("ptw") 	# to filter sits
+devtools::install_github("e-sensing/sits") # install sits package and all dependencies
+install.packages("opencpu")
+
+library(opencpu)
+ocpu_start_server()  # execute this
+
+Or to start an App, case already have a app: 
+ocpu_start_app("rwebapps/stockapp")
+
+OBS.: Leave this terminal open
+
+--- Open R project ocpusits.Rpfoj package in RStudio 
+git clone https://github.com/ammaciel/ocpusits.git
+
+Build -> Clean and Rebuild
+Check
+
+OBS.: You can use a package or create its own package with specific functions to work in an application opencpu. In my case, I created a new package only with specific functions of the sits
+
+You can test package via curl in a terminal, but with ocpu_start_server() executing in other terminal
+curl -v localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+
+--- In browser (firefox, chrome ...):
+After your package has been builded in RStudio with ocpu_start_server() executing in a R terminal. Copy-paste the below address in browser address bar 
+
+- "Ajax request" button and search by ocpusits in the list
+http://localhost:5656/ocpu/ 
+http://localhost:5656/ocpu/library/
+
+- you can see the applcation web created in package (.../ocpusits/inst/www)
+http://localhost:5656/ocpu/user/adeline/library/ocpusits 
+
+- you can see the function
+http://localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/print 
+
+- case you want add parameters to test your package
+http://localhost:5656/ocpu/test/
+
+
+----------------
+-- Execute other app examples
+----------------
+
+--- Open R in a terminal and execute, quit  ocpu_start_server() in others R terminal, because the address will show as already in use.
+library(opencpu)
+
+ocpu_start_app("rwebapps/nabel")
+browser: http://localhost:5656/ocpu/apps/rwebapps/nabel/www/
+
+ocpu_start_app("rwebapps/markdownapp")
+browser: http://localhost:5656/ocpu/apps/rwebapps/markdownapp/www/
+
+ocpu_start_app("rwebapps/stockapp")
+browser: http://localhost:5656/ocpu/apps/rwebapps/stockapp/www/
+
+ocpu_start_app("ammaciel/ocpusits")
+brower: http://localhost:5656/ocpu/apps/ammaciel/ocpusits/www/
+
+--- Install / remove apps
+remove_apps("rwebapps/stockapp")
+
+----------------
+-- Cloud server opencpu
+----------------
+https://cloud.opencpu.org/ocpu/test/
+
+
+
