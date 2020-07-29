@@ -66,7 +66,6 @@ TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD
     data.ts <- .summary_ts(point.tb)
     result <- list(point.tb[,1:5], data.ts)
     return(result)
-
   }
 }
 
@@ -106,19 +105,18 @@ TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD
   # plot(x = data.tb$Index, y = data.tb$mean, type = "l")
   # plot.ts(data.tb)
   return(points.df)
-
 }
 
 # ## Example
 # library("ocpusits")
 # json_file <- '[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.29034729510528,-13.2377769601908]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.240025261100111]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-56.28803758114594,-13.2377769601908]}}]'
-#
+
 # ts_data <- TSoperationSHP(name_service = "WTSS", coverage = "MOD13Q1", bands = "evi", start_date = "2000-02-18", end_date = "2017-08-21", geojson_points = json_file)
 # plot.ts(x = ts_data[[2]]$Index, y = ts_data[[2]]$mean, type = "l")
-#
+
 # ts_dataSV <- TSoperationSHP(name_service = "SATVEG", coverage = "terra", geojson_points = json_file)
 # plot.ts(x = ts_dataSV[[2]]$Index, y = ts_dataSV[[2]]$mean, type = "l", col = "blue")
-#
+
 
 
 

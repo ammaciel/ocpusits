@@ -25,7 +25,6 @@
 
 TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL, latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL){
 
-  requireNamespace("wtss", quietly = TRUE)
   #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)

@@ -27,7 +27,5 @@ TSplot <- function(ts_data = NULL){
   # crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   #
   # sp::plot(rgeos::readWKT(text = wkt_file, p4s = crs))
-
-
 }
 
