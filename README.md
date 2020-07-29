@@ -16,29 +16,31 @@ Fig. 1. Application design using OpenCPU
 </tr>
 </table>
 
-With a webhook, every push to Github will be mirrored onto the OpenCPU server. You can access the app on http://ammaciel.ocpu.io/ocpusits/www
+With a webhook, every push to Github will be mirrored onto the OpenCPU server. You can access thin app inn http://ammaciel.ocpu.io/ocpusits/www 
 
 
 ## Prerequisites:
 
 - Running [opencpu](https://www.opencpu.org/) server.
+- devtools R package
 
-## Installation
+## Installation and execution in RStudio
 
-    ## In R:
-
-    install.packages("devtools")
+    ## In R terminal:
 
     library(opencpu)
-    ocpu_start_server("ocpusits")
+    ocpu_start_server()
 
-    library(devtools)
-    install_github("ammaciel/ocpusits")
+    ## In RStudio terminal:
+    
+    devtools::install_github("ammaciel/ocpusits")
 
     ocpusits::TSoperation(name_service = "WTSS", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
     
-    # In a browser:
+    ## In a browser:
     http://localhost:5656/ocpu/library/ocpusits/www/
+
+## Installation and execution via Docker
 
     ## In a terminal using a docker image:
     
@@ -51,16 +53,17 @@ With a webhook, every push to Github will be mirrored onto the OpenCPU server. Y
     # Lookup the container ID
     docker ps
 
-    # Run in a shell
-    docker exec -i -t container_id_of_image_ammaciel /bin/bash
-
-    # Sends the specified data in a POST request to the localhost (docker image)
-    curl -v localhost:8004/ocpu/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+    # Run in a terminal via docker
+    docker exec -i -t container_id /bin/bash
+    exit
 
     ## In a terminal 
     
+    # Send a specific data in a POST request to the localhost (docker image)
+    curl -v localhost:8004/ocpu/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+
     # Or sends the specified data in a POST request to the OpenCPU server
-    curl -v http://ammaciel.ocpu.io/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+    curl -v http://ammaciel.ocpu.io/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 
   

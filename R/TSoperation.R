@@ -56,22 +56,20 @@ TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q
 # curl localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -H "Content-Type: application/json" -d '{"name_service":"WTSS", "coverage":"MOD13Q1", "bands":"evi", "longitude":-56, "latitude":"-12", "start_date":"2001-01-01", "end_date":"2002-01-01"}'
 
 # save file
-# curl -o file.json localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -o opencpu_output_file.json localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 # only json
-# curl localhost:5656/ocpu/user/adeline/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 # information
-# curl -v localhost:5656/ocpu/user/adeline/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -v localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 # headers information
-#curl -i -H "Accept: application/json" localhost:5656/ocpu/user/adeline/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -i -H "Accept: application/json" localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
-#curl -H "Accept: application/json" localhost:5656/ocpu/user/adeline/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -H "Accept: application/json" localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
-#curl -H "Accept: application/json" 150.163.17.239:5656/ocpu/user/adeline/library/ocputest/R/TSoperation/json -d 'name_service="WTSS-INPE"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
+# curl -H "Accept: application/json" localhost:5656/ocpu/user/adeline/library/ocpusits/R/TSoperation/json -d 'name_service="WTSS"&coverage="MOD13Q1"&bands="evi"&longitude="-56"&latitude="-12"&start_date="2001-01-01"&end_date="2002-01-01"'
 
 # curl https://public.opencpu.org/ocpu/library/stats/R/rnorm/json \ -H "Content-Type: application/json" -d '{"n":3, "mean": 10, "sd":10}'
-#
-# curl -v https://demo.ocpu.io/stocks/R/smoothplot -d 'ticker="GOOG"&from="2013-01-01"'
 
