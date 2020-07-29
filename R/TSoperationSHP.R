@@ -18,7 +18,7 @@
 #' @param geojson_points   receive a GeoJSON with all points from polygon
 #' @return Data set with time series data
 #' @export
-#'
+#' @import wtss
 #' @importFrom sits sits_cube sits_get_data
 #' @importFrom jsonlite fromJSON
 #' @importFrom tibble tibble
@@ -26,7 +26,7 @@
 
 TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, geojson_points = NULL){
 
-  #input validation
+  # input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
   json_data <- jsonlite::fromJSON(geojson_points)

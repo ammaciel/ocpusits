@@ -19,13 +19,14 @@
 #' @param end_date      last date of the interval
 #' @return Data set with time series data
 #' @export
-#'
+#' @import wtss
 #' @importFrom sits sits_cube sits_get_data
 #'
 
 TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL, latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL){
 
-  # #input validation
+  requireNamespace("wtss", quietly = TRUE)
+  #input validation
   name_service <- match.arg(name_service)
   coverage <- match.arg(coverage)
 

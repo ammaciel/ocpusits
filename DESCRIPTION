@@ -16,7 +16,8 @@ Imports:
         signal,
         sits,
         stats,
-        tibble
+        tibble, 
+        wtss
 Remotes:
       e-sensing/sits
 URL: https://github.com/ammaciel/ocpusits

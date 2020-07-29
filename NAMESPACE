@@ -3,6 +3,7 @@
 export(TSfilter)
 export(TSoperation)
 export(TSoperationSHP)
+import(wtss)
 importFrom(jsonlite,fromJSON)
 importFrom(magrittr,"%>%")
 importFrom(sits,sits_cube)
