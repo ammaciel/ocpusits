@@ -35,7 +35,7 @@ TSfilter <- function(ts_data = NULL, type_filter = c("No-filter", "Whittaker", "
   # "Whittaker filter"
   if(type_filter == "Whittaker"){
 
-    res <- sits::sits_whittaker(data = ts_data, lambda = as.numeric(wh_lambda), bands_suffix = "wt") %>%
+    res <- sits::sits_whittaker(data = ts_data, lambda = as.numeric(wh_lambda), bands_suffix = "wt" ) %>%
       sits::sits_merge (ts_data)
     return(res)
   }
@@ -44,7 +44,7 @@ TSfilter <- function(ts_data = NULL, type_filter = c("No-filter", "Whittaker", "
   if(type_filter == "Savitsky-Golay"){
 
     res <- sits::sits_sgolay(data = ts_data, order = as.numeric(sg_order), length = as.numeric(sg_length),
-                             scaling = as.numeric(sg_scaling), bands_suffix = "sg") %>%
+                             scaling = as.numeric(sg_scaling), bands_suffix = "sg" ) %>%
       sits::sits_merge (ts_data)
     return(res)
   }

@@ -101,7 +101,7 @@ TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD
                    quantile_25 = apply(data.df, 1,
                                        function(x) stats::quantile(x, probs=c(1/4))),
                    quantile_75 = apply(data.df, 1,
-                                       function(x) stats::quantile(x, probs=c(3/4)))))
+                                       function(x) stats::quantile(x, probs=c(3/4)))) )
   # plot(x = data.tb$Index, y = data.tb$mean, type = "l")
   # plot.ts(data.tb)
   return(points.df)

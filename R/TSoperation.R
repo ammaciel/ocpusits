@@ -38,12 +38,12 @@ TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q
     return(point.tb)
   }
 
-  if(name_service == "SATVEG" & (coverage == "terra" | coverage == "aqua" | coverage == "comb")){
+  if(name_service == "SATVEG" & (coverage == "terra" | coverage == "aqua" | coverage == "comb") ){
     cube_satveg <- sits::sits_cube(type = name_service, name = coverage)
     # retrieve the time series associated with the point from the WTSS server
     point.tb <- sits::sits_get_data(cube = cube_satveg,
                                     longitude = as.numeric(longitude),
-                                    latitude = as.numeric(latitude))
+                                    latitude = as.numeric(latitude) )
     return(point.tb)
   }
 }
