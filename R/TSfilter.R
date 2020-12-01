@@ -19,7 +19,7 @@
 #' @return Plot time series filtered
 #' @export
 #'
-#' @importFrom sits sits_whittaker sits_sgolay sits_merge sits_plot
+#' @importFrom sits sits_whittaker sits_sgolay sits_merge
 #' @importFrom magrittr "%>%"
 #'
 
@@ -50,14 +50,14 @@ TSfilter <- function(ts_data = NULL, type_filter = c("No-filter", "Whittaker", "
   }
 }
 
-# test <- TSoperation(name_service = "WTSS", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "evi", start_date = "2004-02-14", end_date = "2018-05-12")
-# plot.ts(test$time_series[[1]]$evi, type="l", col="black" )
+# test <- TSoperation(name_service = "WTSS", coverage = "MOD13Q1", longitude = -56.245043, latitude = -13.224772, bands = "EVI", start_date = "2004-02-14", end_date = "2018-05-12")
+# plot.ts(test$time_series[[1]]$EVI, type="l", col="black" )
 
 # test.sg <- TSfilter(ts_data = test, type_filter = "Savitsky-Golay")
-# lines(test.sg$time_series[[1]]$evi.sg, col="red")
+# lines(test.sg$time_series[[1]]$EVI.sg, col="red")
 
 # test.wf <- TSfilter(ts_data = test, type_filter = "Whittaker")
-# lines(test.wf$time_series[[1]]$evi.sg, col="red")
+# lines(test.wf$time_series[[1]]$EVI.wt, col="red")
 
 
 
