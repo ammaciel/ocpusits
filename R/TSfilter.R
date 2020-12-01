@@ -18,7 +18,7 @@
 #'
 #' @return Plot time series filtered
 #' @export
-#'
+#' @import signal ptw
 #' @importFrom sits sits_whittaker sits_sgolay sits_merge
 #' @importFrom magrittr "%>%"
 #'

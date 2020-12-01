@@ -12,6 +12,8 @@ RoxygenNote: 7.1.0
 Imports:
         jsonlite,
         magrittr,
+        ptw,
+        signal,
         sits,
         stats,
         tibble, 

@@ -3,6 +3,8 @@
 export(TSfilter)
 export(TSoperation)
 export(TSoperationSHP)
+import(ptw)
+import(signal)
 import(wtss)
 importFrom(jsonlite,fromJSON)
 importFrom(magrittr,"%>%")
