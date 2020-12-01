@@ -7,7 +7,7 @@
 #'
 #' @usage TSoperationSHP(name_service = c("WTSS", "SATVEG"),
 #' coverage = c("MOD13Q1", "terra", "aqua", "comb"),
-#' bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
+#' bands = c("NDVI", "EVI", "NIR", "MIR", "BLUE", "RED"),
 #' start_date = NULL, end_date = NULL, geojson_points = NULL)
 #'
 #' @param name_service  information of service, like WTSS or SATVEG.
@@ -24,7 +24,7 @@
 #' @importFrom tibble tibble
 #'
 
-TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL, geojson_points = NULL){
+TSoperationSHP <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), bands = c("NDVI", "EVI", "NIR", "MIR", "BLUE", "RED"), start_date = NULL, end_date = NULL, geojson_points = NULL){
 
   # input validation
   name_service <- match.arg(name_service)

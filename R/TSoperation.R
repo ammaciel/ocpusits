@@ -7,7 +7,7 @@
 #'
 #' @usage TSoperation(name_service = c("WTSS", "SATVEG"),
 #' coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL,
-#' latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
+#' latitude = NULL, bands = c("NDVI", "EVI", "NIR", "MIR", "BLUE", "RED"),
 #' start_date = NULL, end_date = NULL)
 #'
 #' @param name_service  information of service, like WTSS or SATVEG.
@@ -23,7 +23,7 @@
 #' @importFrom sits sits_cube sits_get_data
 #'
 
-TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL, latitude = NULL, bands = c("ndvi", "evi", "nir", "mir", "blue", "red"), start_date = NULL, end_date = NULL){
+TSoperation <- function(name_service = c("WTSS", "SATVEG"), coverage = c("MOD13Q1", "terra", "aqua", "comb"), longitude = NULL, latitude = NULL, bands = c("NDVI", "EVI", "NIR", "MIR", "BLUE", "RED"), start_date = NULL, end_date = NULL){
 
   #input validation
   name_service <- match.arg(name_service)

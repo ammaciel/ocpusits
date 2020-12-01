@@ -6,7 +6,7 @@
 \usage{
 TSoperationSHP(name_service = c("WTSS", "SATVEG"),
 coverage = c("MOD13Q1", "terra", "aqua", "comb"),
-bands = c("ndvi", "evi", "nir", "mir", "blue", "red"),
+bands = c("NDVI", "EVI", "NIR", "MIR", "BLUE", "RED"),
 start_date = NULL, end_date = NULL, geojson_points = NULL)
 }
 \arguments{
