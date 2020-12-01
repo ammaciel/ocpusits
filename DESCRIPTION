@@ -19,7 +19,8 @@ Imports:
         tibble, 
         wtss
 Remotes:
-      e-sensing/sits
+      e-sensing/sits,
+      e-sensing/wtss
 URL: https://github.com/ammaciel/ocpusits
 BugReports: https://github.com/ammaciel/ocpusits
 Suggests: curl
